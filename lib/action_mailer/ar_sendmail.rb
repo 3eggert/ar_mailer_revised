@@ -410,7 +410,7 @@ class ActionMailer::ARSendmail
   def cleanup
     return if @max_age == 0
     timeout = Time.now - @max_age
-    conditions = ['last_send_attempt > 0 and created_on < ?', timeout]
+    conditions = ['last_send_attempt > 0 and created_at < ?', timeout]
     mail = ActionMailer::Base.email_class.destroy_all conditions
 
     log "expired #{mail.length} emails from the queue"
