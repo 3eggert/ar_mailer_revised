@@ -1,6 +1,5 @@
 #!/usr/bin/env ruby
 
-require 'action_mailer/ar_sendmail'
-
-ActionMailer::ARSendmail.run
+require 'ar_mailer_revised/mailman'
+ArMailerRevised::Mailman.run
 
