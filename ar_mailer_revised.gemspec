@@ -1,6 +1,7 @@
 # coding: utf-8
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
+
 require 'ar_mailer_revised/version'
 
 Gem::Specification.new do |spec|
@@ -8,7 +9,7 @@ Gem::Specification.new do |spec|
   spec.version       = ArMailerRevised::VERSION
   spec.authors       = ['Stefan Exner']
   spec.email         = ['stex@sterex.de']
-  spec.description   = %q{Even delivering email to the local machine may take too long when you have to send hundreds of messagespec.  ar_mailer allows you to store messages into the database for later delivery by a separate process, ar_sendmail.}
+  spec.description   = %q{Extension of the great ArMailer gem by Eric Hodel.}
   spec.summary       = 'Batch email sending for rails applications'
   spec.homepage      = 'http://www.github.com/stex/ar_mailer_revised'
   spec.license       = 'MIT'

@@ -13,15 +13,11 @@
 # @attr [String] mail
 #   The mail body, including the mail header information (from, to, encoding, ...)
 #
-# @attr [Date] date_to_send
+# @attr [Date] delivery_date
 #   Field for the customized ARMailer. If this is set, the email won't be sent before the given date.
 #   This is used for delayed emails, e.g. "post stay emails"
 #
-# @attr [String] record_identifier
-#   Field used to connect an email / sent email to a certain record in vz.rooms that caused its sending.
-#   The record identifier is a string containing e.g. the client id and record class / id
-#
-# @attr [Hash] settings
+# @attr [Hash] smtp_settings
 #   Serialized Hash storing custom SMTP settings just for this email.
 #   If this value is +nil+, the system will use the default SMTP settings
 #
@@ -29,20 +25,21 @@
 module ArMailerRevised
   module EmailScaffold
 
-    def self.included(base)
-      base.class_eval do
-        base.send :extend, ClassMethods
-      end
-    end
+    extend ActiveSupport::Concern
 
-    module ClassMethods
-      serialize :settings
+    included do
+      serialize :smtp_settings
 
       #Only emails which are to be send immediately
-      scope :without_delayed,  -> {where(:date_to_send => nil)}
+      scope :without_delayed,  lambda {where(:delivery_time => nil)}
 
       #All emails which are ready to be sent
-      scope :ready_to_deliver, -> {where('emails.date_to_send IS NULL OR emails.date_to_send <= ?', Time.now.to_date)}
+      scope :ready_to_deliver, lambda {where('delivery_time IS NULL OR delivery_time <= ?', Time.now)}
+    end
+
+
+    module ClassMethods
+
     end
 
   end
