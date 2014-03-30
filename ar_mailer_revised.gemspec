@@ -26,4 +26,5 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'actionmailer', '~> 4'
   spec.add_dependency 'log4r'
+  spec.add_dependency 'hirb'
 end

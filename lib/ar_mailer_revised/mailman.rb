@@ -9,6 +9,8 @@
 require 'optparse'
 require 'net/smtp'
 require 'ar_mailer_revised/version'
+require 'ar_mailer_revised/helpers/command_line'
+require 'ar_mailer_revised/helpers/general'
 
 module ArMailerRevised
   class Mailman
