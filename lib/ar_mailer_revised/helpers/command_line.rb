@@ -1,4 +1,5 @@
 require 'hirb'
+require 'optparse'
 
 module ArMailerRevised
   module Helpers
@@ -45,12 +46,8 @@ module ArMailerRevised
         def display_mail_queue
           emails = ActionMailer::Base.email_class.ready_to_deliver
           puts 'Mail queue is empty' and return if emails.empty?
-          puts Hirb::Helpers::AutoTable.render emails, :fields => [:from, :to, :delivery_time, :updated_at]
+          puts Hirb::Helpers::AutoTable.render emails, :fields => [:from, :to, :delivery_time, :last_send_attempt, :updated_at]
         end
-
-
-
-
 
         def process_args(args)
           name = File.basename $0
@@ -157,7 +154,7 @@ module ArMailerRevised
             EOF
           end
 
-          return options
+          options
         end
 
         #

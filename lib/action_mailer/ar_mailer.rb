@@ -24,7 +24,7 @@ class ActionMailer::Base
   end
 
   #
-  # @return [String]
+  # @return [String] (Email)
   #   The email class' name
   #
   def self.email_class_name
