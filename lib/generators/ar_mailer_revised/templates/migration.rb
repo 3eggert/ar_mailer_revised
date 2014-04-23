@@ -1,6 +1,6 @@
-class CreateEmails < ActiveRecord::Migration
+class Create<%= model_name.classify.pluralize %> < ActiveRecord::Migration
   def self.change
-    create_table :emails do |t|
+    create_table :<%= model_name.underscore.pluralize %> do |t|
       t.string   'from'
       t.string   'to'
 
@@ -15,6 +15,16 @@ class CreateEmails < ActiveRecord::Migration
 
       #Custom SMTP settings per email
       t.text     'smtp_settings'
+
+      #You can add further attributes here, they can then be assigned
+      #to the email record using the +ar_mailer_attribute+ method from
+      #within mailer methods. Example:
+      #
+      # In the migration:
+      #  t.integer :client_id
+      #
+      # Inside the mailer method:
+      #   ar_mailer_attribute :client_id, @client.id
 
       t.timestamps
     end

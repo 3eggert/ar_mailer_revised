@@ -5,34 +5,6 @@
 
 class ActionMailer::Base
   #
-  # Sets the class which is used to create emails in
-  # the system. Defaults to +Email+
-  #
-  # @param [ActiveRecord::Base, String, Symbol] klass
-  #   Class to be used for email creation
-  #
-  def self.email_class=(klass)
-    @@email_class_name = klass.to_s
-  end
-
-  #
-  # @return [ActiveRecord::Base] (Email)
-  #   The class used to create new emails in the system
-  #
-  def self.email_class
-    self.email_class_name.constantize
-  end
-
-  #
-  # @return [String] (Email)
-  #   The email class' name
-  #
-  def self.email_class_name
-    @@email_class_name ||= 'Email'
-    @@email_class_name.classify
-  end
-
-  #
   # Sets a custom email class attribute. It can be used
   # if the user wants to set custom attributes on his email records,
   # e.g. to track them later.
@@ -95,7 +67,7 @@ end
 module ActionMailer
   class DeliveryMethodActiveRecord
     #
-    # The delivery method seems to be called with a settings hash from the mailer gem.
+    # The delivery method seems to be called with a settings hash from the mail gem.
     #
     def initialize(settings)
       @settings = settings
@@ -120,7 +92,7 @@ module ActionMailer
       email_options.reverse_merge!(ar_settings[:custom_attributes] || {})
 
       mail.destinations.each do |destination|
-        ActionMailer::Base.email_class.create!(email_options.merge({:to => destination}))
+        ArMailerRevised.email_class.create!(email_options.merge({:to => destination}))
       end
     end
   end
