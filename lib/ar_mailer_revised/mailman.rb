@@ -23,6 +23,15 @@ module ArMailerRevised
       @options = options
     end
 
+    def run
+     logger.debug 'ArMailerRevised initialized with the following options:'
+     logger.debug Hirb::Helpers::AutoTable.render @options
+
+     deliver_emails
+    end
+
+    private
+
     #
     # Performs a single email sending for the given batch size
     # Only emails which are ready for sending are actually sent.
@@ -46,7 +55,8 @@ module ArMailerRevised
 
       logger.info "Starting batch sending process, sending #{emails.count} / #{total_mail_count} mails"
 
-      group_emails_by_settings(emails).each do |setting, grouped_emails|
+      group_emails_by_settings(emails).each do |settings_hash, grouped_emails|
+        setting = OpenStruct.new(settings_hash)
         logger.info "Using setting #{setting.domain}/#{setting.user_name}"
 
         smtp = Net::SMTP.new setting.host, setting.port
@@ -99,8 +109,6 @@ module ArMailerRevised
       end
 
     end
-
-    private
 
     #
     # As there may be multiple emails using the same SMTP settings,
