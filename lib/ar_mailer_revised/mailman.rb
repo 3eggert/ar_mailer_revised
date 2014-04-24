@@ -21,8 +21,6 @@ module ArMailerRevised
     #
     def initialize(options = {})
       @options = options
-
-
     end
 
     #
@@ -38,8 +36,8 @@ module ArMailerRevised
     # @todo: Probably add better error handling than simple re-tries
     #
     def deliver_emails
-      total_mail_count = ActionMailer::Base.email_class.ready_to_deliver.count
-      emails           = ActionMailer::Base.email_class.ready_to_deliver.with_batch_size(@options[:batch_size])
+      total_mail_count = ArMailerRevised.email_class.ready_to_deliver.count
+      emails           = ArMailerRevised.email_class.ready_to_deliver.with_batch_size(@options[:batch_size])
 
       if emails.empty?
         logger.info 'No emails to be sent, existing'
@@ -130,97 +128,5 @@ module ArMailerRevised
         hash
       end
     end
-
-
-
-    def deliver(emails)
-      daemon_log = Logger.new 'daemon'
-      daemon_log.level = Log4r::DEBUG
-      filename = File.join(File.dirname(__FILE__)) + "/../../../log/XMailer.log"
-      file_log = Log4r::FileOutputter.new('daemon', :filename => filename, :trunc => false)
-      file_log.formatter = PatternFormatter.new(:pattern => "[%l] %d :: %m")
-      daemon_log.outputters = file_log
-      daemon_log.info "Custom ARMailer started. In vz.admin."
-
-      settings = emails.collect{|x| x.settings }.uniq.compact
-      settings << smtp_settings
-
-      used_settings = [] #even though the settings are being uniqed, it was necessary...
-      for setting in settings
-        next if used_settings.include?(setting.to_s)
-        used_settings << setting.to_s
-        daemon_log.info "SETTING FOR %s" % [setting[:address]]
-        user = setting[:user] || setting[:user_name]
-        begin
-          Net::SMTP.start setting[:address], setting[:port],
-                          setting[:domain], user,
-                          setting[:password],
-                          setting[:authentication],
-                          setting[:tls] do |smtp|
-            @failed_auth_count = 0
-
-            for email in emails
-              email.settings = smtp_settings if email.settings.nil?
-              next if email.settings.to_s != setting.to_s
-              begin
-                res = smtp.send_message email.mail, email.from, email.to
-                email.destroy
-                daemon_log.info "sent email %011d from %s to %s: %p via server: %s and domain: %s" %
-                                    [email.id, email.from, email.to, res, setting[:address], setting[:domain]]
-              rescue Net::SMTPFatalError => e
-                daemon_log.info "5xx error sending email %d, removing from queue: %p(%s):\n\t%s" %
-                                    [email.id, e.message, e.class, e.backtrace.join("\n\t")]
-                email.destroy
-                smtp.reset
-              rescue Net::SMTPServerBusy => e
-                daemon_log.info "server too busy, sleeping #{@delay} seconds"
-                sleep delay
-                return
-              rescue Net::SMTPUnknownError, Net::SMTPSyntaxError, TimeoutError => e
-                email.last_send_attempt = Time.now.to_i
-                email.save rescue nil
-                daemon_log.info "error sending email %d: %p(%s):\n\t%s" %
-                                    [email.id, e.message, e.class, e.backtrace.join("\n\t")]
-                smtp.reset
-              end
-            end
-            daemon_log.info "Custom ARMailer finished."
-          end #end SMTP
-            #settings wrong? send email from standard server
-        rescue Net::SMTPAuthenticationError => e
-          daemon_log.info "Authentication Error. Settings wrong?"
-          daemon_log.info "Complete Error: " + e.to_s
-          daemon_log.info "Username and Password: " + (setting[:user] || setting[:user_name]) + " / " + setting[:password]
-          for email in emails
-            if email.settings.to_s == setting.to_s
-              daemon_log.info "Updates settings to nil for %011d" % [email.id]
-              email.settings = nil
-              email.save
-            end
-          end
-        rescue Exception => e
-          daemon_log.info "smtp error: #{e.inspect}, #{e.message}"
-          for email in emails
-            if not email.settings.nil? and email.settings.to_s == setting.to_s
-              daemon_log.info "Updated settings to nil for %011d" % [email.id]
-              email.settings = nil
-              email.save
-            end
-          end
-        end
-      end #for setting
-    rescue Net::SMTPAuthenticationError => e
-      @failed_auth_count += 1
-      if @failed_auth_count >= MAX_AUTH_FAILURES then
-        daemon_log.info "authentication error, giving up: #{e.message}"
-        raise e
-      else
-        daemon_log.info "authentication error, retrying: #{e.message}"
-      end
-      sleep delay
-    rescue Net::SMTPServerBusy, SystemCallError, OpenSSL::SSL::SSLError
-      # ignore SMTPServerBusy/EPIPE/ECONNRESET from Net::SMTP.start's ensure
-    end
-
   end
 end
