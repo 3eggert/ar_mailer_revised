@@ -25,7 +25,12 @@ module ArMailerRevised
 
         initializer 'ar_mailer_revised.rb', <<INIT
 ArMailerRevised.configuration do |config|
+
+  #The model your application is using for email sending.
+  #If you created it using the ArMailerRevised generator, the below
+  #model name should already be correct.
   config.email_class = #{model_name}
+
 end
 INIT
       end
@@ -34,12 +39,6 @@ INIT
 
       def model_name
         @model_name.blank? ? 'Email' : @model_name.classify
-      end
-
-      desc 'Creates a migration for the email table'
-      def create_migration
-        migration_template 'create_emails.rb', 'db/migrate/create_emails.rb'
-        initializer
       end
     end
   end
