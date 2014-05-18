@@ -59,31 +59,15 @@ module ArMailerRevised
         setting = OpenStruct.new(settings_hash)
         logger.info "Using setting #{setting.domain}/#{setting.user_name}"
 
-        smtp = Net::SMTP.new setting.host, setting.port
+        smtp = Net::SMTP.new(setting.host, setting.port)
 
-        #Enable StartTLS if wished.
-        #TODO: Make sure that it's really starttls what we need here
-        smtp.enable_starttls if setting.use_tls
+        setup_tls(smtp, setting)
 
         #Connect to the server and handle possible errors
         begin
           smtp.start(setting.domain, setting.user_name, setting.password, setting.authentication) do
             grouped_emails.each do |email|
-              logger.info "Sending Email ##{email.id}"
-
-              #Try to send the email and handle possible errors
-              begin
-                smtp.send_message(email.mail, email.from, email.to)
-                email.destroy
-              rescue Net::SMTPServerBusy => e
-                logger.warn 'Server is currently busy, trying again next batch'
-                logger.warn 'Complete Error: ' + e.to_s
-              rescue Net::SMTPSyntaxError, Net::SMTPFatalError, Net::SMTPUnknownError, Net::ReadTimeout => e
-                logger.warn 'Other Exception. Adjusting last_send_attempt and trying again next batch'
-                logger.warn 'Complete Error: ' + e.to_s
-                email.last_send_attempt = Time.now.to_i
-                email.save(false)
-              end
+              send_email(smtp, email)
             end
           end
         rescue Net::SMTPAuthenticationError => e
@@ -135,6 +119,66 @@ module ArMailerRevised
         end
         hash
       end
+    end
+
+    #
+    # Sets the wished TLS / StartTLS options in the
+    # given SMTP instance, based on what the user defined
+    # in his application's / the email's SMTP settings.
+    #
+    # Available Settings are (descending importance, meaning that
+    # a higher importance setting will override a lower importance setting)
+    #
+    # 1. +:enable_starttls_auto+ enables STARTTLS if the serves is capable to handle it
+    # 2. +:enable_starttls+ forces the usage of STARTTLS, whether the server is capable of it or not
+    # 3. +:tls+ forces the usage of TLS (SSL SMTP)
+    #
+    def setup_tls(smtp, setting)
+      if setting.enable_starttls_auto
+        smtp.enable_starttls_auto
+      elsif setting.enable_starttls
+        smtp.enable_starttls
+      elsif setting.tls
+        smtp.enable_tls
+      end
+    end
+
+    #
+    # Performs an email sending attempt
+    #
+    # @param [Net::SMTP] smtp
+    #   The SMTP connection which already has to be established
+    #
+    # @param [Email]
+    #   The email record to be sent.
+    #
+    # Error handling works as follows:
+    #
+    #   - If the server is busy while sending the email (SMTPServerBusy),
+    #     the system will leave the email at its old place in the queue and try
+    #     again next batch as we simply assume that the server failure is just temporarily
+    #     and the email will not cause the whole email sending to stagnate
+    #
+    #   - If another error occurs, the system will adjust the last_send_attempt
+    #     in the email record and therefore move it to the end of the queue to
+    #     ensure that other (working) emails are sent without being held up
+    #     in the queue by this probably malformed one.
+    #
+    # Errors are logged with the :warn level.
+    #
+    def send_email(smtp, email)
+      logger.info "Sending Email ##{email.id}"
+
+      smtp.send_message(email.mail, email.from, email.to)
+      email.destroy
+    rescue Net::SMTPServerBusy => e
+      logger.warn 'Server is currently busy, trying again next batch'
+      logger.warn 'Complete Error: ' + e.to_s
+    rescue Net::SMTPSyntaxError, Net::SMTPFatalError, Net::SMTPUnknownError, Net::ReadTimeout => e
+      logger.warn 'Other Exception. Adjusting last_send_attempt and trying again next batch'
+      logger.warn 'Complete Error: ' + e.to_s
+      email.last_send_attempt = Time.now.to_i
+      email.save(:validate => false)
     end
   end
 end

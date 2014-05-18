@@ -1,6 +1,6 @@
-class Create<%= model_name.classify.pluralize %> < ActiveRecord::Migration
+class CreateEmails < ActiveRecord::Migration
   def change
-    create_table :<%= model_name.underscore.pluralize %> do |t|
+    create_table :emails do |t|
       t.string   'from'
       t.string   'to'
 
@@ -30,3 +30,4 @@ class Create<%= model_name.classify.pluralize %> < ActiveRecord::Migration
     end
   end
 end
+
