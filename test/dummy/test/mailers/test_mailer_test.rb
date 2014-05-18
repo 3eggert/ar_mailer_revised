@@ -29,5 +29,26 @@ class TestMailerTest < ActionMailer::TestCase
       assert email.delivery_time >= (Time.now + 1.hour + 59.minutes)
       assert email.delivery_time <= (Time.now + 2.hours)
     end
+
+    should 'set custom SMTP settings in the email record' do
+      assert TestMailer.custom_smtp_email.deliver
+      assert email = Email.first
+      assert email.smtp_settings
+      assert_equal email.smtp_settings, {
+          :address   => 'localhost',
+          :port      => 25,
+          :domain    => 'localhost.localdomain',
+          :user_name => 'some.user',
+          :password  => 'some.password',
+          :authentication => :plain,
+          :enable_starttls_auto => true
+      }
+    end
+
+    should 'set custom attributes in the email record' do
+      assert TestMailer.custom_attribute_email.deliver
+      assert email = Email.first
+      assert_equal 42, email.a_number
+    end
   end
 end

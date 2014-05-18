@@ -16,6 +16,8 @@ class CreateEmails < ActiveRecord::Migration
       #Custom SMTP settings per email
       t.text     'smtp_settings'
 
+      t.integer  'a_number'
+
       #You can add further attributes here, they can then be assigned
       #to the email record using the +ar_mailer_attribute+ method from
       #within mailer methods. Example:

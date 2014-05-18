@@ -967,3 +967,1398 @@ ar-mailer-settings: ---=0Adelivery_time: 2014-05-18 18:15:02.194085603
 Delayed Email Body
   [1m[35mEmail Load (0.1ms)[0m  SELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1
   [1m[36m (0.1ms)[0m  [1mrollback transaction[0m
+  [1m[36mActiveRecord::SchemaMigration Load (0.1ms)[0m  [1mSELECT "schema_migrations".* FROM "schema_migrations"[0m
+  [1m[35m (0.1ms)[0m  begin transaction
+----------------------------------------------------------------------------------------------------
+TestMailerTest: test_: ActionMailer::Base.deliver should create a new email record in the database. 
+----------------------------------------------------------------------------------------------------
+  [1m[36mEmail Load (0.2ms)[0m  [1mSELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1[0m
+
+TestMailer#basic_email: processed outbound mail in 7.4ms
+  [1m[35m (0.1ms)[0m  SAVEPOINT active_record_1
+  [1m[36mSQL (0.3ms)[0m  [1mINSERT INTO "emails" ("created_at", "from", "mail", "smtp_settings", "to", "updated_at") VALUES (?, ?, ?, ?, ?, ?)[0m  [["created_at", "2014-05-18 15:08:29.100384"], ["from", "from@example.com"], ["mail", "Date: Sun, 18 May 2014 17:08:29 +0200\r\nFrom: from@example.com\r\nTo: basic_email@example.com\r\nMessage-ID: <5378cced14f9f_c7010bbe947659f@zeus.mail>\r\nSubject: Basic Email Subject\r\nMime-Version: 1.0\r\nContent-Type: text/plain;\r\n charset=UTF-8\r\nContent-Transfer-Encoding: 7bit\r\n\r\nBasic Email Body"], ["smtp_settings", nil], ["to", "basic_email@example.com"], ["updated_at", "2014-05-18 15:08:29.100384"]]
+  [1m[35m (0.0ms)[0m  RELEASE SAVEPOINT active_record_1
+
+Sent mail to basic_email@example.com (49.3ms)
+Date: Sun, 18 May 2014 17:08:29 +0200
+From: from@example.com
+To: basic_email@example.com
+Message-ID: <5378cced14f9f_c7010bbe947659f@zeus.mail>
+Subject: Basic Email Subject
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=UTF-8
+Content-Transfer-Encoding: 7bit
+
+Basic Email Body
+  [1m[36mEmail Load (0.1ms)[0m  [1mSELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1[0m
+  [1m[35m (0.1ms)[0m  rollback transaction
+  [1m[36m (0.0ms)[0m  [1mbegin transaction[0m
+-------------------------------------------------------------------------------------------------------
+TestMailerTest: test_: ActionMailer::Base.deliver should set custom SMTP settings in the email record. 
+-------------------------------------------------------------------------------------------------------
+  [1m[35mEmail Load (0.2ms)[0m  SELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1
+
+TestMailer#custom_smtp_email: processed outbound mail in 5.5ms
+  [1m[36m (0.1ms)[0m  [1mSAVEPOINT active_record_1[0m
+  [1m[35mSQL (0.1ms)[0m  INSERT INTO "emails" ("created_at", "from", "mail", "smtp_settings", "to", "updated_at") VALUES (?, ?, ?, ?, ?, ?)  [["created_at", "2014-05-18 15:08:29.119137"], ["from", "from@example.com"], ["mail", "Date: Sun, 18 May 2014 17:08:29 +0200\r\nFrom: from@example.com\r\nTo: custom_smtp_email@example.com\r\nMessage-ID: <5378cced1bcaf_c7010bbe9476682@zeus.mail>\r\nSubject: Custom SMTP Email Subject\r\nMime-Version: 1.0\r\nContent-Type: text/plain;\r\n charset=UTF-8\r\nContent-Transfer-Encoding: 7bit\r\n\r\nCustom SMTP Email Body"], ["smtp_settings", "---\n:address: localhost\n:port: 25\n:domain: localhost.localdomain\n:user_name: some.user\n:password: some.password\n:authentication: :plain\n:enable_starttls_auto: true\n"], ["to", "custom_smtp_email@example.com"], ["updated_at", "2014-05-18 15:08:29.119137"]]
+  [1m[36m (0.0ms)[0m  [1mRELEASE SAVEPOINT active_record_1[0m
+
+Sent mail to custom_smtp_email@example.com (7.9ms)
+Date: Sun, 18 May 2014 17:08:29 +0200
+From: from@example.com
+To: custom_smtp_email@example.com
+Message-ID: <5378cced1bcaf_c7010bbe9476682@zeus.mail>
+Subject: Custom SMTP Email Subject
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=UTF-8
+Content-Transfer-Encoding: 7bit
+ar-mailer-settings: ---=0Asmtp_settings:=0A  :address: localhost=0A  :port:
+ 25=0A  :domain: localhost.localdomain=0A  :user_name: some.user=0A  :password:
+ some.password=0A  :authentication: :plain=0A  :enable_starttls_auto: true=0A
+
+Custom SMTP Email Body
+  [1m[35mEmail Load (0.1ms)[0m  SELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1
+  [1m[36m (0.1ms)[0m  [1mrollback transaction[0m
+  [1m[35m (0.0ms)[0m  begin transaction
+----------------------------------------------------------------------------------------------------------------
+TestMailerTest: test_: ActionMailer::Base.deliver should set custom delivery times in the created email record. 
+----------------------------------------------------------------------------------------------------------------
+  [1m[36mEmail Load (0.1ms)[0m  [1mSELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1[0m
+
+TestMailer#delayed_email: processed outbound mail in 4.6ms
+  [1m[35m (0.1ms)[0m  SAVEPOINT active_record_1
+  [1m[36mSQL (0.2ms)[0m  [1mINSERT INTO "emails" ("created_at", "delivery_time", "from", "mail", "smtp_settings", "to", "updated_at") VALUES (?, ?, ?, ?, ?, ?, ?)[0m  [["created_at", "2014-05-18 15:08:29.134444"], ["delivery_time", "2014-05-18 17:08:29.124330"], ["from", "from@example.com"], ["mail", "Date: Sun, 18 May 2014 17:08:29 +0200\r\nFrom: from@example.com\r\nTo: delayed_email@example.com\r\nMessage-ID: <5378cced1fa6e_c7010bbe94767ae@zeus.mail>\r\nSubject: Delayed Email Subject\r\nMime-Version: 1.0\r\nContent-Type: text/plain;\r\n charset=UTF-8\r\nContent-Transfer-Encoding: 7bit\r\n\r\nDelayed Email Body"], ["smtp_settings", nil], ["to", "delayed_email@example.com"], ["updated_at", "2014-05-18 15:08:29.134444"]]
+  [1m[35m (0.1ms)[0m  RELEASE SAVEPOINT active_record_1
+
+Sent mail to delayed_email@example.com (7.0ms)
+Date: Sun, 18 May 2014 17:08:29 +0200
+From: from@example.com
+To: delayed_email@example.com
+Message-ID: <5378cced1fa6e_c7010bbe94767ae@zeus.mail>
+Subject: Delayed Email Subject
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=UTF-8
+Content-Transfer-Encoding: 7bit
+ar-mailer-settings: ---=0Adelivery_time: 2014-05-18 19:08:29.124330845
+ +02:00=0A
+
+Delayed Email Body
+  [1m[36mEmail Load (0.2ms)[0m  [1mSELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1[0m
+  [1m[35m (0.1ms)[0m  rollback transaction
+  [1m[36mActiveRecord::SchemaMigration Load (0.1ms)[0m  [1mSELECT "schema_migrations".* FROM "schema_migrations"[0m
+  [1m[35m (0.1ms)[0m  begin transaction
+----------------------------------------------------------------------------------------------------
+TestMailerTest: test_: ActionMailer::Base.deliver should create a new email record in the database. 
+----------------------------------------------------------------------------------------------------
+  [1m[36mEmail Load (0.1ms)[0m  [1mSELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1[0m
+
+TestMailer#basic_email: processed outbound mail in 7.0ms
+  [1m[35m (0.1ms)[0m  SAVEPOINT active_record_1
+  [1m[36mSQL (0.3ms)[0m  [1mINSERT INTO "emails" ("created_at", "from", "mail", "smtp_settings", "to", "updated_at") VALUES (?, ?, ?, ?, ?, ?)[0m  [["created_at", "2014-05-18 15:09:01.593661"], ["from", "from@example.com"], ["mail", "Date: Sun, 18 May 2014 17:09:01 +0200\r\nFrom: from@example.com\r\nTo: basic_email@example.com\r\nMessage-ID: <5378cd0d8cf10_c90969e9821238@zeus.mail>\r\nSubject: Basic Email Subject\r\nMime-Version: 1.0\r\nContent-Type: text/plain;\r\n charset=UTF-8\r\nContent-Transfer-Encoding: 7bit\r\n\r\nBasic Email Body"], ["smtp_settings", nil], ["to", "basic_email@example.com"], ["updated_at", "2014-05-18 15:09:01.593661"]]
+  [1m[35m (0.0ms)[0m  RELEASE SAVEPOINT active_record_1
+
+Sent mail to basic_email@example.com (55.8ms)
+Date: Sun, 18 May 2014 17:09:01 +0200
+From: from@example.com
+To: basic_email@example.com
+Message-ID: <5378cd0d8cf10_c90969e9821238@zeus.mail>
+Subject: Basic Email Subject
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=UTF-8
+Content-Transfer-Encoding: 7bit
+
+Basic Email Body
+  [1m[36mEmail Load (0.1ms)[0m  [1mSELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1[0m
+  [1m[35m (0.1ms)[0m  rollback transaction
+  [1m[36m (0.0ms)[0m  [1mbegin transaction[0m
+-------------------------------------------------------------------------------------------------------
+TestMailerTest: test_: ActionMailer::Base.deliver should set custom SMTP settings in the email record. 
+-------------------------------------------------------------------------------------------------------
+  [1m[35mEmail Load (0.1ms)[0m  SELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1
+
+TestMailer#custom_smtp_email: processed outbound mail in 5.6ms
+  [1m[36m (0.1ms)[0m  [1mSAVEPOINT active_record_1[0m
+  [1m[35mSQL (0.1ms)[0m  INSERT INTO "emails" ("created_at", "from", "mail", "smtp_settings", "to", "updated_at") VALUES (?, ?, ?, ?, ?, ?)  [["created_at", "2014-05-18 15:09:01.611729"], ["from", "from@example.com"], ["mail", "Date: Sun, 18 May 2014 17:09:01 +0200\r\nFrom: from@example.com\r\nTo: custom_smtp_email@example.com\r\nMessage-ID: <5378cd0d940e1_c90969e98213c4@zeus.mail>\r\nSubject: Custom SMTP Email Subject\r\nMime-Version: 1.0\r\nContent-Type: text/plain;\r\n charset=UTF-8\r\nContent-Transfer-Encoding: 7bit\r\n\r\nCustom SMTP Email Body"], ["smtp_settings", "---\n:address: localhost\n:port: 25\n:domain: localhost.localdomain\n:user_name: some.user\n:password: some.password\n:authentication: :plain\n:enable_starttls_auto: true\n"], ["to", "custom_smtp_email@example.com"], ["updated_at", "2014-05-18 15:09:01.611729"]]
+  [1m[36m (0.0ms)[0m  [1mRELEASE SAVEPOINT active_record_1[0m
+
+Sent mail to custom_smtp_email@example.com (7.8ms)
+Date: Sun, 18 May 2014 17:09:01 +0200
+From: from@example.com
+To: custom_smtp_email@example.com
+Message-ID: <5378cd0d940e1_c90969e98213c4@zeus.mail>
+Subject: Custom SMTP Email Subject
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=UTF-8
+Content-Transfer-Encoding: 7bit
+ar-mailer-settings: ---=0Asmtp_settings:=0A  :address: localhost=0A  :port:
+ 25=0A  :domain: localhost.localdomain=0A  :user_name: some.user=0A  :password:
+ some.password=0A  :authentication: :plain=0A  :enable_starttls_auto: true=0A
+
+Custom SMTP Email Body
+  [1m[35mEmail Load (0.1ms)[0m  SELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1
+  [1m[36m (0.1ms)[0m  [1mrollback transaction[0m
+  [1m[35m (0.0ms)[0m  begin transaction
+----------------------------------------------------------------------------------------------------------------
+TestMailerTest: test_: ActionMailer::Base.deliver should set custom delivery times in the created email record. 
+----------------------------------------------------------------------------------------------------------------
+  [1m[36mEmail Load (0.1ms)[0m  [1mSELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1[0m
+
+TestMailer#delayed_email: processed outbound mail in 4.9ms
+  [1m[35m (0.1ms)[0m  SAVEPOINT active_record_1
+  [1m[36mSQL (0.2ms)[0m  [1mINSERT INTO "emails" ("created_at", "delivery_time", "from", "mail", "smtp_settings", "to", "updated_at") VALUES (?, ?, ?, ?, ?, ?, ?)[0m  [["created_at", "2014-05-18 15:09:01.627808"], ["delivery_time", "2014-05-18 17:09:01.617045"], ["from", "from@example.com"], ["mail", "Date: Sun, 18 May 2014 17:09:01 +0200\r\nFrom: from@example.com\r\nTo: delayed_email@example.com\r\nMessage-ID: <5378cd0d980ab_c90969e9821424@zeus.mail>\r\nSubject: Delayed Email Subject\r\nMime-Version: 1.0\r\nContent-Type: text/plain;\r\n charset=UTF-8\r\nContent-Transfer-Encoding: 7bit\r\n\r\nDelayed Email Body"], ["smtp_settings", nil], ["to", "delayed_email@example.com"], ["updated_at", "2014-05-18 15:09:01.627808"]]
+  [1m[35m (0.0ms)[0m  RELEASE SAVEPOINT active_record_1
+
+Sent mail to delayed_email@example.com (7.1ms)
+Date: Sun, 18 May 2014 17:09:01 +0200
+From: from@example.com
+To: delayed_email@example.com
+Message-ID: <5378cd0d980ab_c90969e9821424@zeus.mail>
+Subject: Delayed Email Subject
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=UTF-8
+Content-Transfer-Encoding: 7bit
+ar-mailer-settings: ---=0Adelivery_time: 2014-05-18 19:09:01.617045882
+ +02:00=0A
+
+Delayed Email Body
+  [1m[36mEmail Load (0.1ms)[0m  [1mSELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1[0m
+  [1m[35m (0.1ms)[0m  rollback transaction
+  [1m[36mActiveRecord::SchemaMigration Load (0.1ms)[0m  [1mSELECT "schema_migrations".* FROM "schema_migrations"[0m
+  [1m[35m (0.1ms)[0m  begin transaction
+----------------------------------------------------------------------------------------------------
+TestMailerTest: test_: ActionMailer::Base.deliver should create a new email record in the database. 
+----------------------------------------------------------------------------------------------------
+  [1m[36mEmail Load (0.1ms)[0m  [1mSELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1[0m
+
+TestMailer#basic_email: processed outbound mail in 5.1ms
+  [1m[35m (0.1ms)[0m  SAVEPOINT active_record_1
+  [1m[36mSQL (0.3ms)[0m  [1mINSERT INTO "emails" ("created_at", "from", "mail", "smtp_settings", "to", "updated_at") VALUES (?, ?, ?, ?, ?, ?)[0m  [["created_at", "2014-05-18 15:17:08.242548"], ["from", "from@example.com"], ["mail", "Date: Sun, 18 May 2014 17:17:08 +0200\r\nFrom: from@example.com\r\nTo: basic_email@example.com\r\nMessage-ID: <5378cef4364c9_d7f4b3e9427399@zeus.mail>\r\nSubject: Basic Email Subject\r\nMime-Version: 1.0\r\nContent-Type: text/plain;\r\n charset=UTF-8\r\nContent-Transfer-Encoding: 7bit\r\n\r\nBasic Email Body"], ["smtp_settings", nil], ["to", "basic_email@example.com"], ["updated_at", "2014-05-18 15:17:08.242548"]]
+  [1m[35m (0.1ms)[0m  RELEASE SAVEPOINT active_record_1
+
+Sent mail to basic_email@example.com (56.4ms)
+Date: Sun, 18 May 2014 17:17:08 +0200
+From: from@example.com
+To: basic_email@example.com
+Message-ID: <5378cef4364c9_d7f4b3e9427399@zeus.mail>
+Subject: Basic Email Subject
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=UTF-8
+Content-Transfer-Encoding: 7bit
+
+Basic Email Body
+  [1m[36mEmail Load (0.1ms)[0m  [1mSELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1[0m
+  [1m[35m (0.1ms)[0m  rollback transaction
+  [1m[36m (0.0ms)[0m  [1mbegin transaction[0m
+-------------------------------------------------------------------------------------------------------
+TestMailerTest: test_: ActionMailer::Base.deliver should set custom SMTP settings in the email record. 
+-------------------------------------------------------------------------------------------------------
+  [1m[35mEmail Load (0.1ms)[0m  SELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1
+
+TestMailer#custom_smtp_email: processed outbound mail in 6.4ms
+  [1m[36m (0.1ms)[0m  [1mSAVEPOINT active_record_1[0m
+  [1m[35mSQL (0.2ms)[0m  INSERT INTO "emails" ("created_at", "from", "mail", "smtp_settings", "to", "updated_at") VALUES (?, ?, ?, ?, ?, ?)  [["created_at", "2014-05-18 15:17:08.264182"], ["from", "from@example.com"], ["mail", "Date: Sun, 18 May 2014 17:17:08 +0200\r\nFrom: from@example.com\r\nTo: custom_smtp_email@example.com\r\nMessage-ID: <5378cef43f0eb_d7f4b3e942743@zeus.mail>\r\nSubject: Custom SMTP Email Subject\r\nMime-Version: 1.0\r\nContent-Type: text/plain;\r\n charset=UTF-8\r\nContent-Transfer-Encoding: 7bit\r\n\r\nCustom SMTP Email Body"], ["smtp_settings", "---\n:address: localhost\n:port: 25\n:domain: localhost.localdomain\n:user_name: some.user\n:password: some.password\n:authentication: :plain\n:enable_starttls_auto: true\n"], ["to", "custom_smtp_email@example.com"], ["updated_at", "2014-05-18 15:17:08.264182"]]
+  [1m[36m (0.0ms)[0m  [1mRELEASE SAVEPOINT active_record_1[0m
+
+Sent mail to custom_smtp_email@example.com (8.9ms)
+Date: Sun, 18 May 2014 17:17:08 +0200
+From: from@example.com
+To: custom_smtp_email@example.com
+Message-ID: <5378cef43f0eb_d7f4b3e942743@zeus.mail>
+Subject: Custom SMTP Email Subject
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=UTF-8
+Content-Transfer-Encoding: 7bit
+ar-mailer-settings: ---=0Asmtp_settings:=0A  :address: localhost=0A  :port:
+ 25=0A  :domain: localhost.localdomain=0A  :user_name: some.user=0A  :password:
+ some.password=0A  :authentication: :plain=0A  :enable_starttls_auto: true=0A
+
+Custom SMTP Email Body
+  [1m[35mEmail Load (0.1ms)[0m  SELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1
+  [1m[36m (0.1ms)[0m  [1mrollback transaction[0m
+  [1m[35m (0.0ms)[0m  begin transaction
+----------------------------------------------------------------------------------------------------
+TestMailerTest: test_: ActionMailer::Base.deliver should set custom attributes in the email record. 
+----------------------------------------------------------------------------------------------------
+  [1m[36mEmail Load (0.1ms)[0m  [1mSELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1[0m
+
+TestMailer#custom_attribute_email: processed outbound mail in 5.5ms
+  [1m[35m (0.1ms)[0m  SAVEPOINT active_record_1
+  [1m[36mSQL (0.1ms)[0m  [1mINSERT INTO "emails" ("created_at", "from", "mail", "smtp_settings", "to", "updated_at") VALUES (?, ?, ?, ?, ?, ?)[0m  [["created_at", "2014-05-18 15:17:08.281991"], ["from", "from@example.com"], ["mail", "Date: Sun, 18 May 2014 17:17:08 +0200\r\nFrom: from@example.com\r\nTo: custom_attribute_email@example.com\r\nMessage-ID: <5378cef4438fc_d7f4b3e94275fd@zeus.mail>\r\nSubject: Custom Attribute Email Subject\r\nMime-Version: 1.0\r\nContent-Type: text/plain;\r\n charset=UTF-8\r\nContent-Transfer-Encoding: 7bit\r\n\r\nCustom Attribute Email Body"], ["smtp_settings", nil], ["to", "custom_attribute_email@example.com"], ["updated_at", "2014-05-18 15:17:08.281991"]]
+  [1m[35m (0.0ms)[0m  RELEASE SAVEPOINT active_record_1
+
+Sent mail to custom_attribute_email@example.com (7.5ms)
+Date: Sun, 18 May 2014 17:17:08 +0200
+From: from@example.com
+To: custom_attribute_email@example.com
+Message-ID: <5378cef4438fc_d7f4b3e94275fd@zeus.mail>
+Subject: Custom Attribute Email Subject
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=UTF-8
+Content-Transfer-Encoding: 7bit
+ar-mailer-settings: ---=0Acustom_attributes:=0A  a_number: 42=0A
+
+Custom Attribute Email Body
+  [1m[36mEmail Load (0.1ms)[0m  [1mSELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1[0m
+  [1m[35m (0.1ms)[0m  rollback transaction
+  [1m[36m (0.0ms)[0m  [1mbegin transaction[0m
+----------------------------------------------------------------------------------------------------------------
+TestMailerTest: test_: ActionMailer::Base.deliver should set custom delivery times in the created email record. 
+----------------------------------------------------------------------------------------------------------------
+  [1m[35mEmail Load (0.1ms)[0m  SELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1
+
+TestMailer#delayed_email: processed outbound mail in 5.1ms
+  [1m[36m (0.1ms)[0m  [1mSAVEPOINT active_record_1[0m
+  [1m[35mSQL (0.2ms)[0m  INSERT INTO "emails" ("created_at", "delivery_time", "from", "mail", "smtp_settings", "to", "updated_at") VALUES (?, ?, ?, ?, ?, ?, ?)  [["created_at", "2014-05-18 15:17:08.297700"], ["delivery_time", "2014-05-18 17:17:08.286722"], ["from", "from@example.com"], ["mail", "Date: Sun, 18 May 2014 17:17:08 +0200\r\nFrom: from@example.com\r\nTo: delayed_email@example.com\r\nMessage-ID: <5378cef4476c4_d7f4b3e942769f@zeus.mail>\r\nSubject: Delayed Email Subject\r\nMime-Version: 1.0\r\nContent-Type: text/plain;\r\n charset=UTF-8\r\nContent-Transfer-Encoding: 7bit\r\n\r\nDelayed Email Body"], ["smtp_settings", nil], ["to", "delayed_email@example.com"], ["updated_at", "2014-05-18 15:17:08.297700"]]
+  [1m[36m (0.0ms)[0m  [1mRELEASE SAVEPOINT active_record_1[0m
+
+Sent mail to delayed_email@example.com (7.3ms)
+Date: Sun, 18 May 2014 17:17:08 +0200
+From: from@example.com
+To: delayed_email@example.com
+Message-ID: <5378cef4476c4_d7f4b3e942769f@zeus.mail>
+Subject: Delayed Email Subject
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=UTF-8
+Content-Transfer-Encoding: 7bit
+ar-mailer-settings: ---=0Adelivery_time: 2014-05-18 19:17:08.286722055
+ +02:00=0A
+
+Delayed Email Body
+  [1m[35mEmail Load (0.1ms)[0m  SELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1
+  [1m[36m (0.1ms)[0m  [1mrollback transaction[0m
+  [1m[36m (0.1ms)[0m  [1mbegin transaction[0m
+----------------------------------------------------------------------------------------------------
+TestMailerTest: test_: ActionMailer::Base.deliver should create a new email record in the database. 
+----------------------------------------------------------------------------------------------------
+  [1m[35mEmail Load (0.2ms)[0m  SELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1
+SQLite3::SQLException: no such table: emails: SELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1
+  [1m[36m (0.1ms)[0m  [1mrollback transaction[0m
+  [1m[35m (0.1ms)[0m  begin transaction
+-------------------------------------------------------------------------------------------------------
+TestMailerTest: test_: ActionMailer::Base.deliver should set custom SMTP settings in the email record. 
+-------------------------------------------------------------------------------------------------------
+  [1m[36mEmail Load (0.2ms)[0m  [1mSELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1[0m
+SQLite3::SQLException: no such table: emails: SELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1
+  [1m[35m (0.1ms)[0m  rollback transaction
+  [1m[36m (0.1ms)[0m  [1mbegin transaction[0m
+----------------------------------------------------------------------------------------------------
+TestMailerTest: test_: ActionMailer::Base.deliver should set custom attributes in the email record. 
+----------------------------------------------------------------------------------------------------
+  [1m[35mEmail Load (0.4ms)[0m  SELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1
+SQLite3::SQLException: no such table: emails: SELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1
+  [1m[36m (0.1ms)[0m  [1mrollback transaction[0m
+  [1m[35m (0.0ms)[0m  begin transaction
+----------------------------------------------------------------------------------------------------------------
+TestMailerTest: test_: ActionMailer::Base.deliver should set custom delivery times in the created email record. 
+----------------------------------------------------------------------------------------------------------------
+  [1m[36mEmail Load (0.2ms)[0m  [1mSELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1[0m
+SQLite3::SQLException: no such table: emails: SELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1
+  [1m[35m (0.1ms)[0m  rollback transaction
+  [1m[36m (0.3ms)[0m  [1mbegin transaction[0m
+----------------------------------------------------------------------------------------------------
+TestMailerTest: test_: ActionMailer::Base.deliver should create a new email record in the database. 
+----------------------------------------------------------------------------------------------------
+  [1m[35mEmail Load (0.2ms)[0m  SELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1
+SQLite3::SQLException: no such table: emails: SELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1
+  [1m[36m (0.1ms)[0m  [1mrollback transaction[0m
+  [1m[35m (0.1ms)[0m  begin transaction
+-------------------------------------------------------------------------------------------------------
+TestMailerTest: test_: ActionMailer::Base.deliver should set custom SMTP settings in the email record. 
+-------------------------------------------------------------------------------------------------------
+  [1m[36mEmail Load (0.2ms)[0m  [1mSELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1[0m
+SQLite3::SQLException: no such table: emails: SELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1
+  [1m[35m (0.1ms)[0m  rollback transaction
+  [1m[36m (0.1ms)[0m  [1mbegin transaction[0m
+----------------------------------------------------------------------------------------------------
+TestMailerTest: test_: ActionMailer::Base.deliver should set custom attributes in the email record. 
+----------------------------------------------------------------------------------------------------
+  [1m[35mEmail Load (0.2ms)[0m  SELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1
+SQLite3::SQLException: no such table: emails: SELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1
+  [1m[36m (0.1ms)[0m  [1mrollback transaction[0m
+  [1m[35m (0.1ms)[0m  begin transaction
+----------------------------------------------------------------------------------------------------------------
+TestMailerTest: test_: ActionMailer::Base.deliver should set custom delivery times in the created email record. 
+----------------------------------------------------------------------------------------------------------------
+  [1m[36mEmail Load (0.2ms)[0m  [1mSELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1[0m
+SQLite3::SQLException: no such table: emails: SELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1
+  [1m[35m (0.1ms)[0m  rollback transaction
+  [1m[36mActiveRecord::SchemaMigration Load (0.1ms)[0m  [1mSELECT "schema_migrations".* FROM "schema_migrations"[0m
+  [1m[35m (0.1ms)[0m  begin transaction
+----------------------------------------------------------------------------------------------------
+TestMailerTest: test_: ActionMailer::Base.deliver should create a new email record in the database. 
+----------------------------------------------------------------------------------------------------
+  [1m[36mEmail Load (0.1ms)[0m  [1mSELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1[0m
+
+TestMailer#basic_email: processed outbound mail in 5.1ms
+  [1m[35m (0.1ms)[0m  SAVEPOINT active_record_1
+  [1m[36mSQL (0.3ms)[0m  [1mINSERT INTO "emails" ("created_at", "from", "mail", "smtp_settings", "to", "updated_at") VALUES (?, ?, ?, ?, ?, ?)[0m  [["created_at", "2014-05-18 15:19:18.721572"], ["from", "from@example.com"], ["mail", "Date: Sun, 18 May 2014 17:19:18 +0200\r\nFrom: from@example.com\r\nTo: basic_email@example.com\r\nMessage-ID: <5378cf76ab4ec_f4cfbbe908273b@zeus.mail>\r\nSubject: Basic Email Subject\r\nMime-Version: 1.0\r\nContent-Type: text/plain;\r\n charset=UTF-8\r\nContent-Transfer-Encoding: 7bit\r\n\r\nBasic Email Body"], ["smtp_settings", nil], ["to", "basic_email@example.com"], ["updated_at", "2014-05-18 15:19:18.721572"]]
+  [1m[35m (0.1ms)[0m  RELEASE SAVEPOINT active_record_1
+
+Sent mail to basic_email@example.com (57.1ms)
+Date: Sun, 18 May 2014 17:19:18 +0200
+From: from@example.com
+To: basic_email@example.com
+Message-ID: <5378cf76ab4ec_f4cfbbe908273b@zeus.mail>
+Subject: Basic Email Subject
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=UTF-8
+Content-Transfer-Encoding: 7bit
+
+Basic Email Body
+  [1m[36mEmail Load (0.2ms)[0m  [1mSELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1[0m
+  [1m[35m (0.1ms)[0m  rollback transaction
+  [1m[36m (0.1ms)[0m  [1mbegin transaction[0m
+-------------------------------------------------------------------------------------------------------
+TestMailerTest: test_: ActionMailer::Base.deliver should set custom SMTP settings in the email record. 
+-------------------------------------------------------------------------------------------------------
+  [1m[35mEmail Load (0.2ms)[0m  SELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1
+
+TestMailer#custom_smtp_email: processed outbound mail in 8.2ms
+  [1m[36m (0.1ms)[0m  [1mSAVEPOINT active_record_1[0m
+  [1m[35mSQL (0.2ms)[0m  INSERT INTO "emails" ("created_at", "from", "mail", "smtp_settings", "to", "updated_at") VALUES (?, ?, ?, ?, ?, ?)  [["created_at", "2014-05-18 15:19:18.746346"], ["from", "from@example.com"], ["mail", "Date: Sun, 18 May 2014 17:19:18 +0200\r\nFrom: from@example.com\r\nTo: custom_smtp_email@example.com\r\nMessage-ID: <5378cf76b4783_f4cfbbe908286a@zeus.mail>\r\nSubject: Custom SMTP Email Subject\r\nMime-Version: 1.0\r\nContent-Type: text/plain;\r\n charset=UTF-8\r\nContent-Transfer-Encoding: 7bit\r\n\r\nCustom SMTP Email Body"], ["smtp_settings", "---\n:address: localhost\n:port: 25\n:domain: localhost.localdomain\n:user_name: some.user\n:password: some.password\n:authentication: :plain\n:enable_starttls_auto: true\n"], ["to", "custom_smtp_email@example.com"], ["updated_at", "2014-05-18 15:19:18.746346"]]
+  [1m[36m (0.1ms)[0m  [1mRELEASE SAVEPOINT active_record_1[0m
+
+Sent mail to custom_smtp_email@example.com (10.6ms)
+Date: Sun, 18 May 2014 17:19:18 +0200
+From: from@example.com
+To: custom_smtp_email@example.com
+Message-ID: <5378cf76b4783_f4cfbbe908286a@zeus.mail>
+Subject: Custom SMTP Email Subject
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=UTF-8
+Content-Transfer-Encoding: 7bit
+ar-mailer-settings: ---=0Asmtp_settings:=0A  :address: localhost=0A  :port:
+ 25=0A  :domain: localhost.localdomain=0A  :user_name: some.user=0A  :password:
+ some.password=0A  :authentication: :plain=0A  :enable_starttls_auto: true=0A
+
+Custom SMTP Email Body
+  [1m[35mEmail Load (0.2ms)[0m  SELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1
+  [1m[36m (0.1ms)[0m  [1mrollback transaction[0m
+  [1m[35m (0.1ms)[0m  begin transaction
+----------------------------------------------------------------------------------------------------
+TestMailerTest: test_: ActionMailer::Base.deliver should set custom attributes in the email record. 
+----------------------------------------------------------------------------------------------------
+  [1m[36mEmail Load (0.2ms)[0m  [1mSELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1[0m
+
+TestMailer#custom_attribute_email: processed outbound mail in 6.8ms
+  [1m[35m (0.1ms)[0m  SAVEPOINT active_record_1
+  [1m[36mSQL (0.2ms)[0m  [1mINSERT INTO "emails" ("created_at", "from", "mail", "smtp_settings", "to", "updated_at") VALUES (?, ?, ?, ?, ?, ?)[0m  [["created_at", "2014-05-18 15:19:18.768128"], ["from", "from@example.com"], ["mail", "Date: Sun, 18 May 2014 17:19:18 +0200\r\nFrom: from@example.com\r\nTo: custom_attribute_email@example.com\r\nMessage-ID: <5378cf76b9e99_f4cfbbe90829d9@zeus.mail>\r\nSubject: Custom Attribute Email Subject\r\nMime-Version: 1.0\r\nContent-Type: text/plain;\r\n charset=UTF-8\r\nContent-Transfer-Encoding: 7bit\r\n\r\nCustom Attribute Email Body"], ["smtp_settings", nil], ["to", "custom_attribute_email@example.com"], ["updated_at", "2014-05-18 15:19:18.768128"]]
+  [1m[35m (0.1ms)[0m  RELEASE SAVEPOINT active_record_1
+
+Sent mail to custom_attribute_email@example.com (9.2ms)
+Date: Sun, 18 May 2014 17:19:18 +0200
+From: from@example.com
+To: custom_attribute_email@example.com
+Message-ID: <5378cf76b9e99_f4cfbbe90829d9@zeus.mail>
+Subject: Custom Attribute Email Subject
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=UTF-8
+Content-Transfer-Encoding: 7bit
+ar-mailer-settings: ---=0Acustom_attributes:=0A  a_number: 42=0A
+
+Custom Attribute Email Body
+  [1m[36mEmail Load (0.2ms)[0m  [1mSELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1[0m
+  [1m[35m (0.3ms)[0m  rollback transaction
+  [1m[36m (0.1ms)[0m  [1mbegin transaction[0m
+----------------------------------------------------------------------------------------------------------------
+TestMailerTest: test_: ActionMailer::Base.deliver should set custom delivery times in the created email record. 
+----------------------------------------------------------------------------------------------------------------
+  [1m[35mEmail Load (0.2ms)[0m  SELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1
+
+TestMailer#delayed_email: processed outbound mail in 7.1ms
+  [1m[36m (0.1ms)[0m  [1mSAVEPOINT active_record_1[0m
+  [1m[35mSQL (0.2ms)[0m  INSERT INTO "emails" ("created_at", "delivery_time", "from", "mail", "smtp_settings", "to", "updated_at") VALUES (?, ?, ?, ?, ?, ?, ?)  [["created_at", "2014-05-18 15:19:18.799191"], ["delivery_time", "2014-05-18 17:19:18.785127"], ["from", "from@example.com"], ["mail", "Date: Sun, 18 May 2014 17:19:18 +0200\r\nFrom: from@example.com\r\nTo: delayed_email@example.com\r\nMessage-ID: <5378cf76c1b24_f4cfbbe9083060@zeus.mail>\r\nSubject: Delayed Email Subject\r\nMime-Version: 1.0\r\nContent-Type: text/plain;\r\n charset=UTF-8\r\nContent-Transfer-Encoding: 7bit\r\n\r\nDelayed Email Body"], ["smtp_settings", nil], ["to", "delayed_email@example.com"], ["updated_at", "2014-05-18 15:19:18.799191"]]
+  [1m[36m (0.0ms)[0m  [1mRELEASE SAVEPOINT active_record_1[0m
+
+Sent mail to delayed_email@example.com (8.3ms)
+Date: Sun, 18 May 2014 17:19:18 +0200
+From: from@example.com
+To: delayed_email@example.com
+Message-ID: <5378cf76c1b24_f4cfbbe9083060@zeus.mail>
+Subject: Delayed Email Subject
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=UTF-8
+Content-Transfer-Encoding: 7bit
+ar-mailer-settings: ---=0Adelivery_time: 2014-05-18 19:19:18.785127594
+ +02:00=0A
+
+Delayed Email Body
+  [1m[35mEmail Load (0.1ms)[0m  SELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1
+  [1m[36m (0.1ms)[0m  [1mrollback transaction[0m
+  [1m[36mActiveRecord::SchemaMigration Load (0.1ms)[0m  [1mSELECT "schema_migrations".* FROM "schema_migrations"[0m
+  [1m[35m (0.1ms)[0m  begin transaction
+----------------------------------------------------------------------------------------------------
+TestMailerTest: test_: ActionMailer::Base.deliver should create a new email record in the database. 
+----------------------------------------------------------------------------------------------------
+  [1m[36mEmail Load (0.4ms)[0m  [1mSELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1[0m
+
+TestMailer#basic_email: processed outbound mail in 5.0ms
+  [1m[35m (0.1ms)[0m  SAVEPOINT active_record_1
+  [1m[36mSQL (0.3ms)[0m  [1mINSERT INTO "emails" ("created_at", "from", "mail", "smtp_settings", "to", "updated_at") VALUES (?, ?, ?, ?, ?, ?)[0m  [["created_at", "2014-05-18 15:20:01.231190"], ["from", "from@example.com"], ["mail", "Date: Sun, 18 May 2014 17:20:01 +0200\r\nFrom: from@example.com\r\nTo: basic_email@example.com\r\nMessage-ID: <5378cfa134f34_f85681e8841378@zeus.mail>\r\nSubject: Basic Email Subject\r\nMime-Version: 1.0\r\nContent-Type: text/plain;\r\n charset=UTF-8\r\nContent-Transfer-Encoding: 7bit\r\n\r\nBasic Email Body"], ["smtp_settings", nil], ["to", "basic_email@example.com"], ["updated_at", "2014-05-18 15:20:01.231190"]]
+  [1m[35m (0.1ms)[0m  RELEASE SAVEPOINT active_record_1
+
+Sent mail to basic_email@example.com (50.2ms)
+Date: Sun, 18 May 2014 17:20:01 +0200
+From: from@example.com
+To: basic_email@example.com
+Message-ID: <5378cfa134f34_f85681e8841378@zeus.mail>
+Subject: Basic Email Subject
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=UTF-8
+Content-Transfer-Encoding: 7bit
+
+Basic Email Body
+  [1m[36mEmail Load (0.2ms)[0m  [1mSELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1[0m
+  [1m[35m (0.1ms)[0m  rollback transaction
+  [1m[36m (0.0ms)[0m  [1mbegin transaction[0m
+-------------------------------------------------------------------------------------------------------
+TestMailerTest: test_: ActionMailer::Base.deliver should set custom SMTP settings in the email record. 
+-------------------------------------------------------------------------------------------------------
+  [1m[35mEmail Load (0.2ms)[0m  SELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1
+
+TestMailer#custom_smtp_email: processed outbound mail in 5.8ms
+  [1m[36m (0.1ms)[0m  [1mSAVEPOINT active_record_1[0m
+  [1m[35mSQL (0.1ms)[0m  INSERT INTO "emails" ("created_at", "from", "mail", "smtp_settings", "to", "updated_at") VALUES (?, ?, ?, ?, ?, ?)  [["created_at", "2014-05-18 15:20:01.250862"], ["from", "from@example.com"], ["mail", "Date: Sun, 18 May 2014 17:20:01 +0200\r\nFrom: from@example.com\r\nTo: custom_smtp_email@example.com\r\nMessage-ID: <5378cfa13bf51_f85681e8841483@zeus.mail>\r\nSubject: Custom SMTP Email Subject\r\nMime-Version: 1.0\r\nContent-Type: text/plain;\r\n charset=UTF-8\r\nContent-Transfer-Encoding: 7bit\r\n\r\nCustom SMTP Email Body"], ["smtp_settings", "---\n:address: localhost\n:port: 25\n:domain: localhost.localdomain\n:user_name: some.user\n:password: some.password\n:authentication: :plain\n:enable_starttls_auto: true\n"], ["to", "custom_smtp_email@example.com"], ["updated_at", "2014-05-18 15:20:01.250862"]]
+  [1m[36m (0.0ms)[0m  [1mRELEASE SAVEPOINT active_record_1[0m
+
+Sent mail to custom_smtp_email@example.com (7.8ms)
+Date: Sun, 18 May 2014 17:20:01 +0200
+From: from@example.com
+To: custom_smtp_email@example.com
+Message-ID: <5378cfa13bf51_f85681e8841483@zeus.mail>
+Subject: Custom SMTP Email Subject
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=UTF-8
+Content-Transfer-Encoding: 7bit
+ar-mailer-settings: ---=0Asmtp_settings:=0A  :address: localhost=0A  :port:
+ 25=0A  :domain: localhost.localdomain=0A  :user_name: some.user=0A  :password:
+ some.password=0A  :authentication: :plain=0A  :enable_starttls_auto: true=0A
+
+Custom SMTP Email Body
+  [1m[35mEmail Load (0.1ms)[0m  SELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1
+  [1m[36m (0.1ms)[0m  [1mrollback transaction[0m
+  [1m[35m (0.0ms)[0m  begin transaction
+----------------------------------------------------------------------------------------------------
+TestMailerTest: test_: ActionMailer::Base.deliver should set custom attributes in the email record. 
+----------------------------------------------------------------------------------------------------
+  [1m[36mEmail Load (0.2ms)[0m  [1mSELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1[0m
+
+TestMailer#custom_attribute_email: processed outbound mail in 4.8ms
+  [1m[35m (0.2ms)[0m  SAVEPOINT active_record_1
+  [1m[36mSQL (0.2ms)[0m  [1mINSERT INTO "emails" ("created_at", "from", "mail", "smtp_settings", "to", "updated_at") VALUES (?, ?, ?, ?, ?, ?)[0m  [["created_at", "2014-05-18 15:20:01.267264"], ["from", "from@example.com"], ["mail", "Date: Sun, 18 May 2014 17:20:01 +0200\r\nFrom: from@example.com\r\nTo: custom_attribute_email@example.com\r\nMessage-ID: <5378cfa13fe48_f85681e884157e@zeus.mail>\r\nSubject: Custom Attribute Email Subject\r\nMime-Version: 1.0\r\nContent-Type: text/plain;\r\n charset=UTF-8\r\nContent-Transfer-Encoding: 7bit\r\n\r\nCustom Attribute Email Body"], ["smtp_settings", nil], ["to", "custom_attribute_email@example.com"], ["updated_at", "2014-05-18 15:20:01.267264"]]
+  [1m[35m (0.1ms)[0m  RELEASE SAVEPOINT active_record_1
+
+Sent mail to custom_attribute_email@example.com (7.8ms)
+Date: Sun, 18 May 2014 17:20:01 +0200
+From: from@example.com
+To: custom_attribute_email@example.com
+Message-ID: <5378cfa13fe48_f85681e884157e@zeus.mail>
+Subject: Custom Attribute Email Subject
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=UTF-8
+Content-Transfer-Encoding: 7bit
+ar-mailer-settings: ---=0Acustom_attributes:=0A  a_number: 42=0A
+
+Custom Attribute Email Body
+  [1m[36mEmail Load (0.1ms)[0m  [1mSELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1[0m
+  [1m[35m (0.1ms)[0m  rollback transaction
+  [1m[36m (0.0ms)[0m  [1mbegin transaction[0m
+----------------------------------------------------------------------------------------------------------------
+TestMailerTest: test_: ActionMailer::Base.deliver should set custom delivery times in the created email record. 
+----------------------------------------------------------------------------------------------------------------
+  [1m[35mEmail Load (0.2ms)[0m  SELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1
+
+TestMailer#delayed_email: processed outbound mail in 4.9ms
+  [1m[36m (0.1ms)[0m  [1mSAVEPOINT active_record_1[0m
+  [1m[35mSQL (0.2ms)[0m  INSERT INTO "emails" ("created_at", "delivery_time", "from", "mail", "smtp_settings", "to", "updated_at") VALUES (?, ?, ?, ?, ?, ?, ?)  [["created_at", "2014-05-18 15:20:01.283041"], ["delivery_time", "2014-05-18 17:20:01.272508"], ["from", "from@example.com"], ["mail", "Date: Sun, 18 May 2014 17:20:01 +0200\r\nFrom: from@example.com\r\nTo: delayed_email@example.com\r\nMessage-ID: <5378cfa143e6e_f85681e8841645@zeus.mail>\r\nSubject: Delayed Email Subject\r\nMime-Version: 1.0\r\nContent-Type: text/plain;\r\n charset=UTF-8\r\nContent-Transfer-Encoding: 7bit\r\n\r\nDelayed Email Body"], ["smtp_settings", nil], ["to", "delayed_email@example.com"], ["updated_at", "2014-05-18 15:20:01.283041"]]
+  [1m[36m (0.1ms)[0m  [1mRELEASE SAVEPOINT active_record_1[0m
+
+Sent mail to delayed_email@example.com (6.8ms)
+Date: Sun, 18 May 2014 17:20:01 +0200
+From: from@example.com
+To: delayed_email@example.com
+Message-ID: <5378cfa143e6e_f85681e8841645@zeus.mail>
+Subject: Delayed Email Subject
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=UTF-8
+Content-Transfer-Encoding: 7bit
+ar-mailer-settings: ---=0Adelivery_time: 2014-05-18 19:20:01.272508704
+ +02:00=0A
+
+Delayed Email Body
+  [1m[35mEmail Load (0.1ms)[0m  SELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1
+  [1m[36m (0.1ms)[0m  [1mrollback transaction[0m
+  [1m[36mActiveRecord::SchemaMigration Load (0.1ms)[0m  [1mSELECT "schema_migrations".* FROM "schema_migrations"[0m
+  [1m[35m (0.1ms)[0m  begin transaction
+----------------------------------------------------------------------------------------------------
+TestMailerTest: test_: ActionMailer::Base.deliver should create a new email record in the database. 
+----------------------------------------------------------------------------------------------------
+  [1m[36mEmail Load (0.1ms)[0m  [1mSELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1[0m
+
+TestMailer#basic_email: processed outbound mail in 5.2ms
+  [1m[35m (0.1ms)[0m  SAVEPOINT active_record_1
+  [1m[36mSQL (0.3ms)[0m  [1mINSERT INTO "emails" ("created_at", "from", "mail", "smtp_settings", "to", "updated_at") VALUES (?, ?, ?, ?, ?, ?)[0m  [["created_at", "2014-05-18 15:20:12.972253"], ["from", "from@example.com"], ["mail", "Date: Sun, 18 May 2014 17:20:12 +0200\r\nFrom: from@example.com\r\nTo: basic_email@example.com\r\nMessage-ID: <5378cface9dc9_fb8623e8c85035@zeus.mail>\r\nSubject: Basic Email Subject\r\nMime-Version: 1.0\r\nContent-Type: text/plain;\r\n charset=UTF-8\r\nContent-Transfer-Encoding: 7bit\r\n\r\nBasic Email Body"], ["smtp_settings", nil], ["to", "basic_email@example.com"], ["updated_at", "2014-05-18 15:20:12.972253"]]
+  [1m[35m (0.0ms)[0m  RELEASE SAVEPOINT active_record_1
+
+Sent mail to basic_email@example.com (47.5ms)
+Date: Sun, 18 May 2014 17:20:12 +0200
+From: from@example.com
+To: basic_email@example.com
+Message-ID: <5378cface9dc9_fb8623e8c85035@zeus.mail>
+Subject: Basic Email Subject
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=UTF-8
+Content-Transfer-Encoding: 7bit
+
+Basic Email Body
+  [1m[36mEmail Load (0.1ms)[0m  [1mSELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1[0m
+  [1m[35m (0.1ms)[0m  rollback transaction
+  [1m[36m (0.0ms)[0m  [1mbegin transaction[0m
+-------------------------------------------------------------------------------------------------------
+TestMailerTest: test_: ActionMailer::Base.deliver should set custom SMTP settings in the email record. 
+-------------------------------------------------------------------------------------------------------
+  [1m[35mEmail Load (0.1ms)[0m  SELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1
+
+TestMailer#custom_smtp_email: processed outbound mail in 5.6ms
+  [1m[36m (0.1ms)[0m  [1mSAVEPOINT active_record_1[0m
+  [1m[35mSQL (0.1ms)[0m  INSERT INTO "emails" ("created_at", "from", "mail", "smtp_settings", "to", "updated_at") VALUES (?, ?, ?, ?, ?, ?)  [["created_at", "2014-05-18 15:20:12.990159"], ["from", "from@example.com"], ["mail", "Date: Sun, 18 May 2014 17:20:12 +0200\r\nFrom: from@example.com\r\nTo: custom_smtp_email@example.com\r\nMessage-ID: <5378cfacf078c_fb8623e8c851a5@zeus.mail>\r\nSubject: Custom SMTP Email Subject\r\nMime-Version: 1.0\r\nContent-Type: text/plain;\r\n charset=UTF-8\r\nContent-Transfer-Encoding: 7bit\r\n\r\nCustom SMTP Email Body"], ["smtp_settings", "---\n:address: localhost\n:port: 25\n:domain: localhost.localdomain\n:user_name: some.user\n:password: some.password\n:authentication: :plain\n:enable_starttls_auto: true\n"], ["to", "custom_smtp_email@example.com"], ["updated_at", "2014-05-18 15:20:12.990159"]]
+  [1m[36m (0.0ms)[0m  [1mRELEASE SAVEPOINT active_record_1[0m
+
+Sent mail to custom_smtp_email@example.com (7.7ms)
+Date: Sun, 18 May 2014 17:20:12 +0200
+From: from@example.com
+To: custom_smtp_email@example.com
+Message-ID: <5378cfacf078c_fb8623e8c851a5@zeus.mail>
+Subject: Custom SMTP Email Subject
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=UTF-8
+Content-Transfer-Encoding: 7bit
+ar-mailer-settings: ---=0Asmtp_settings:=0A  :address: localhost=0A  :port:
+ 25=0A  :domain: localhost.localdomain=0A  :user_name: some.user=0A  :password:
+ some.password=0A  :authentication: :plain=0A  :enable_starttls_auto: true=0A
+
+Custom SMTP Email Body
+  [1m[35mEmail Load (0.1ms)[0m  SELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1
+  [1m[36m (0.1ms)[0m  [1mrollback transaction[0m
+  [1m[35m (0.0ms)[0m  begin transaction
+----------------------------------------------------------------------------------------------------
+TestMailerTest: test_: ActionMailer::Base.deliver should set custom attributes in the email record. 
+----------------------------------------------------------------------------------------------------
+  [1m[36mEmail Load (0.1ms)[0m  [1mSELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1[0m
+
+TestMailer#custom_attribute_email: processed outbound mail in 4.9ms
+  [1m[35m (0.1ms)[0m  SAVEPOINT active_record_1
+  [1m[36mSQL (0.2ms)[0m  [1mINSERT INTO "emails" ("created_at", "from", "mail", "smtp_settings", "to", "updated_at") VALUES (?, ?, ?, ?, ?, ?)[0m  [["created_at", "2014-05-18 15:20:13.006994"], ["from", "from@example.com"], ["mail", "Date: Sun, 18 May 2014 17:20:13 +0200\r\nFrom: from@example.com\r\nTo: custom_attribute_email@example.com\r\nMessage-ID: <5378cfad3a3_fb8623e8c852f8@zeus.mail>\r\nSubject: Custom Attribute Email Subject\r\nMime-Version: 1.0\r\nContent-Type: text/plain;\r\n charset=UTF-8\r\nContent-Transfer-Encoding: 7bit\r\n\r\nCustom Attribute Email Body"], ["smtp_settings", nil], ["to", "custom_attribute_email@example.com"], ["updated_at", "2014-05-18 15:20:13.006994"]]
+  [1m[35m (0.1ms)[0m  RELEASE SAVEPOINT active_record_1
+
+Sent mail to custom_attribute_email@example.com (8.3ms)
+Date: Sun, 18 May 2014 17:20:13 +0200
+From: from@example.com
+To: custom_attribute_email@example.com
+Message-ID: <5378cfad3a3_fb8623e8c852f8@zeus.mail>
+Subject: Custom Attribute Email Subject
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=UTF-8
+Content-Transfer-Encoding: 7bit
+ar-mailer-settings: ---=0Acustom_attributes:=0A  a_number: 42=0A
+
+Custom Attribute Email Body
+  [1m[36mEmail Load (0.2ms)[0m  [1mSELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1[0m
+  [1m[35m (0.1ms)[0m  rollback transaction
+  [1m[36m (0.1ms)[0m  [1mbegin transaction[0m
+----------------------------------------------------------------------------------------------------------------
+TestMailerTest: test_: ActionMailer::Base.deliver should set custom delivery times in the created email record. 
+----------------------------------------------------------------------------------------------------------------
+  [1m[35mEmail Load (0.1ms)[0m  SELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1
+
+TestMailer#delayed_email: processed outbound mail in 4.8ms
+  [1m[36m (0.1ms)[0m  [1mSAVEPOINT active_record_1[0m
+  [1m[35mSQL (0.2ms)[0m  INSERT INTO "emails" ("created_at", "delivery_time", "from", "mail", "smtp_settings", "to", "updated_at") VALUES (?, ?, ?, ?, ?, ?, ?)  [["created_at", "2014-05-18 15:20:13.022984"], ["delivery_time", "2014-05-18 17:20:13.012584"], ["from", "from@example.com"], ["mail", "Date: Sun, 18 May 2014 17:20:13 +0200\r\nFrom: from@example.com\r\nTo: delayed_email@example.com\r\nMessage-ID: <5378cfad4697_fb8623e8c853e2@zeus.mail>\r\nSubject: Delayed Email Subject\r\nMime-Version: 1.0\r\nContent-Type: text/plain;\r\n charset=UTF-8\r\nContent-Transfer-Encoding: 7bit\r\n\r\nDelayed Email Body"], ["smtp_settings", nil], ["to", "delayed_email@example.com"], ["updated_at", "2014-05-18 15:20:13.022984"]]
+  [1m[36m (0.0ms)[0m  [1mRELEASE SAVEPOINT active_record_1[0m
+
+Sent mail to delayed_email@example.com (6.9ms)
+Date: Sun, 18 May 2014 17:20:13 +0200
+From: from@example.com
+To: delayed_email@example.com
+Message-ID: <5378cfad4697_fb8623e8c853e2@zeus.mail>
+Subject: Delayed Email Subject
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=UTF-8
+Content-Transfer-Encoding: 7bit
+ar-mailer-settings: ---=0Adelivery_time: 2014-05-18 19:20:13.012584911
+ +02:00=0A
+
+Delayed Email Body
+  [1m[35mEmail Load (0.1ms)[0m  SELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1
+  [1m[36m (0.1ms)[0m  [1mrollback transaction[0m
+  [1m[36mActiveRecord::SchemaMigration Load (0.1ms)[0m  [1mSELECT "schema_migrations".* FROM "schema_migrations"[0m
+  [1m[35m (0.1ms)[0m  begin transaction
+----------------------------------------------------------------------------------------------------
+TestMailerTest: test_: ActionMailer::Base.deliver should create a new email record in the database. 
+----------------------------------------------------------------------------------------------------
+  [1m[36mEmail Load (0.2ms)[0m  [1mSELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1[0m
+
+TestMailer#basic_email: processed outbound mail in 7.2ms
+  [1m[35m (0.1ms)[0m  SAVEPOINT active_record_1
+  [1m[36mSQL (0.4ms)[0m  [1mINSERT INTO "emails" ("created_at", "from", "mail", "smtp_settings", "to", "updated_at") VALUES (?, ?, ?, ?, ?, ?)[0m  [["created_at", "2014-05-18 15:20:39.979382"], ["from", "from@example.com"], ["mail", "Date: Sun, 18 May 2014 17:20:39 +0200\r\nFrom: from@example.com\r\nTo: basic_email@example.com\r\nMessage-ID: <5378cfc7ea228_fd41025e94229e6@zeus.mail>\r\nSubject: Basic Email Subject\r\nMime-Version: 1.0\r\nContent-Type: text/plain;\r\n charset=UTF-8\r\nContent-Transfer-Encoding: 7bit\r\n\r\nBasic Email Body"], ["smtp_settings", nil], ["to", "basic_email@example.com"], ["updated_at", "2014-05-18 15:20:39.979382"]]
+  [1m[35m (0.1ms)[0m  RELEASE SAVEPOINT active_record_1
+
+Sent mail to basic_email@example.com (60.7ms)
+Date: Sun, 18 May 2014 17:20:39 +0200
+From: from@example.com
+To: basic_email@example.com
+Message-ID: <5378cfc7ea228_fd41025e94229e6@zeus.mail>
+Subject: Basic Email Subject
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=UTF-8
+Content-Transfer-Encoding: 7bit
+
+Basic Email Body
+  [1m[36mEmail Load (0.2ms)[0m  [1mSELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1[0m
+  [1m[35m (0.1ms)[0m  rollback transaction
+  [1m[36m (0.1ms)[0m  [1mbegin transaction[0m
+-------------------------------------------------------------------------------------------------------
+TestMailerTest: test_: ActionMailer::Base.deliver should set custom SMTP settings in the email record. 
+-------------------------------------------------------------------------------------------------------
+  [1m[35mEmail Load (0.2ms)[0m  SELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1
+
+TestMailer#custom_smtp_email: processed outbound mail in 7.7ms
+  [1m[36m (0.1ms)[0m  [1mSAVEPOINT active_record_1[0m
+  [1m[35mSQL (0.2ms)[0m  INSERT INTO "emails" ("created_at", "from", "mail", "smtp_settings", "to", "updated_at") VALUES (?, ?, ?, ?, ?, ?)  [["created_at", "2014-05-18 15:20:40.003735"], ["from", "from@example.com"], ["mail", "Date: Sun, 18 May 2014 17:20:39 +0200\r\nFrom: from@example.com\r\nTo: custom_smtp_email@example.com\r\nMessage-ID: <5378cfc7f34f0_fd41025e942307d@zeus.mail>\r\nSubject: Custom SMTP Email Subject\r\nMime-Version: 1.0\r\nContent-Type: text/plain;\r\n charset=UTF-8\r\nContent-Transfer-Encoding: 7bit\r\n\r\nCustom SMTP Email Body"], ["smtp_settings", "---\n:address: localhost\n:port: 25\n:domain: localhost.localdomain\n:user_name: some.user\n:password: some.password\n:authentication: :plain\n:enable_starttls_auto: true\n"], ["to", "custom_smtp_email@example.com"], ["updated_at", "2014-05-18 15:20:40.003735"]]
+  [1m[36m (0.1ms)[0m  [1mRELEASE SAVEPOINT active_record_1[0m
+
+Sent mail to custom_smtp_email@example.com (10.6ms)
+Date: Sun, 18 May 2014 17:20:39 +0200
+From: from@example.com
+To: custom_smtp_email@example.com
+Message-ID: <5378cfc7f34f0_fd41025e942307d@zeus.mail>
+Subject: Custom SMTP Email Subject
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=UTF-8
+Content-Transfer-Encoding: 7bit
+ar-mailer-settings: ---=0Asmtp_settings:=0A  :address: localhost=0A  :port:
+ 25=0A  :domain: localhost.localdomain=0A  :user_name: some.user=0A  :password:
+ some.password=0A  :authentication: :plain=0A  :enable_starttls_auto: true=0A
+
+Custom SMTP Email Body
+  [1m[35mEmail Load (0.2ms)[0m  SELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1
+  [1m[36m (0.1ms)[0m  [1mrollback transaction[0m
+  [1m[35m (0.1ms)[0m  begin transaction
+----------------------------------------------------------------------------------------------------
+TestMailerTest: test_: ActionMailer::Base.deliver should set custom attributes in the email record. 
+----------------------------------------------------------------------------------------------------
+  [1m[36mEmail Load (0.2ms)[0m  [1mSELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1[0m
+
+TestMailer#custom_attribute_email: processed outbound mail in 6.6ms
+  [1m[35m (0.1ms)[0m  SAVEPOINT active_record_1
+  [1m[36mSQL (0.2ms)[0m  [1mINSERT INTO "emails" ("created_at", "from", "mail", "smtp_settings", "to", "updated_at") VALUES (?, ?, ?, ?, ?, ?)[0m  [["created_at", "2014-05-18 15:20:40.025017"], ["from", "from@example.com"], ["mail", "Date: Sun, 18 May 2014 17:20:40 +0200\r\nFrom: from@example.com\r\nTo: custom_attribute_email@example.com\r\nMessage-ID: <5378cfc84823_fd41025e94231fb@zeus.mail>\r\nSubject: Custom Attribute Email Subject\r\nMime-Version: 1.0\r\nContent-Type: text/plain;\r\n charset=UTF-8\r\nContent-Transfer-Encoding: 7bit\r\n\r\nCustom Attribute Email Body"], ["smtp_settings", nil], ["to", "custom_attribute_email@example.com"], ["updated_at", "2014-05-18 15:20:40.025017"]]
+  [1m[35m (0.1ms)[0m  RELEASE SAVEPOINT active_record_1
+
+Sent mail to custom_attribute_email@example.com (9.1ms)
+Date: Sun, 18 May 2014 17:20:40 +0200
+From: from@example.com
+To: custom_attribute_email@example.com
+Message-ID: <5378cfc84823_fd41025e94231fb@zeus.mail>
+Subject: Custom Attribute Email Subject
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=UTF-8
+Content-Transfer-Encoding: 7bit
+ar-mailer-settings: ---=0Acustom_attributes:=0A  a_number: 42=0A
+
+Custom Attribute Email Body
+  [1m[36mEmail Load (0.2ms)[0m  [1mSELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1[0m
+  [1m[35m (0.3ms)[0m  rollback transaction
+  [1m[36m (0.1ms)[0m  [1mbegin transaction[0m
+----------------------------------------------------------------------------------------------------------------
+TestMailerTest: test_: ActionMailer::Base.deliver should set custom delivery times in the created email record. 
+----------------------------------------------------------------------------------------------------------------
+  [1m[35mEmail Load (0.2ms)[0m  SELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1
+
+TestMailer#delayed_email: processed outbound mail in 7.2ms
+  [1m[36m (0.1ms)[0m  [1mSAVEPOINT active_record_1[0m
+  [1m[35mSQL (0.2ms)[0m  INSERT INTO "emails" ("created_at", "delivery_time", "from", "mail", "smtp_settings", "to", "updated_at") VALUES (?, ?, ?, ?, ?, ?, ?)  [["created_at", "2014-05-18 15:20:40.054182"], ["delivery_time", "2014-05-18 17:20:40.040969"], ["from", "from@example.com"], ["mail", "Date: Sun, 18 May 2014 17:20:40 +0200\r\nFrom: from@example.com\r\nTo: delayed_email@example.com\r\nMessage-ID: <5378cfc8bf55_fd41025e942326b@zeus.mail>\r\nSubject: Delayed Email Subject\r\nMime-Version: 1.0\r\nContent-Type: text/plain;\r\n charset=UTF-8\r\nContent-Transfer-Encoding: 7bit\r\n\r\nDelayed Email Body"], ["smtp_settings", nil], ["to", "delayed_email@example.com"], ["updated_at", "2014-05-18 15:20:40.054182"]]
+  [1m[36m (0.0ms)[0m  [1mRELEASE SAVEPOINT active_record_1[0m
+
+Sent mail to delayed_email@example.com (7.4ms)
+Date: Sun, 18 May 2014 17:20:40 +0200
+From: from@example.com
+To: delayed_email@example.com
+Message-ID: <5378cfc8bf55_fd41025e942326b@zeus.mail>
+Subject: Delayed Email Subject
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=UTF-8
+Content-Transfer-Encoding: 7bit
+ar-mailer-settings: ---=0Adelivery_time: 2014-05-18 19:20:40.040969981
+ +02:00=0A
+
+Delayed Email Body
+  [1m[35mEmail Load (0.1ms)[0m  SELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1
+  [1m[36m (0.1ms)[0m  [1mrollback transaction[0m
+  [1m[36mActiveRecord::SchemaMigration Load (0.1ms)[0m  [1mSELECT "schema_migrations".* FROM "schema_migrations"[0m
+  [1m[35m (0.2ms)[0m  begin transaction
+----------------------------------------------------------------------------------------------------
+TestMailerTest: test_: ActionMailer::Base.deliver should create a new email record in the database. 
+----------------------------------------------------------------------------------------------------
+  [1m[36mEmail Load (0.1ms)[0m  [1mSELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1[0m
+
+TestMailer#basic_email: processed outbound mail in 5.3ms
+  [1m[35m (0.1ms)[0m  SAVEPOINT active_record_1
+  [1m[36mSQL (0.3ms)[0m  [1mINSERT INTO "emails" ("created_at", "from", "mail", "smtp_settings", "to", "updated_at") VALUES (?, ?, ?, ?, ?, ?)[0m  [["created_at", "2014-05-18 15:22:28.487484"], ["from", "from@example.com"], ["mail", "Date: Sun, 18 May 2014 17:22:28 +0200\r\nFrom: from@example.com\r\nTo: basic_email@example.com\r\nMessage-ID: <5378d03473818_104c1271e8c4327@zeus.mail>\r\nSubject: Basic Email Subject\r\nMime-Version: 1.0\r\nContent-Type: text/plain;\r\n charset=UTF-8\r\nContent-Transfer-Encoding: 7bit\r\n\r\nBasic Email Body"], ["smtp_settings", nil], ["to", "basic_email@example.com"], ["updated_at", "2014-05-18 15:22:28.487484"]]
+  [1m[35m (0.0ms)[0m  RELEASE SAVEPOINT active_record_1
+
+Sent mail to basic_email@example.com (46.7ms)
+Date: Sun, 18 May 2014 17:22:28 +0200
+From: from@example.com
+To: basic_email@example.com
+Message-ID: <5378d03473818_104c1271e8c4327@zeus.mail>
+Subject: Basic Email Subject
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=UTF-8
+Content-Transfer-Encoding: 7bit
+
+Basic Email Body
+  [1m[36mEmail Load (0.1ms)[0m  [1mSELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1[0m
+  [1m[35m (0.1ms)[0m  rollback transaction
+  [1m[36m (0.0ms)[0m  [1mbegin transaction[0m
+-------------------------------------------------------------------------------------------------------
+TestMailerTest: test_: ActionMailer::Base.deliver should set custom SMTP settings in the email record. 
+-------------------------------------------------------------------------------------------------------
+  [1m[35mEmail Load (0.1ms)[0m  SELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1
+
+TestMailer#custom_smtp_email: processed outbound mail in 5.6ms
+  [1m[36m (0.1ms)[0m  [1mSAVEPOINT active_record_1[0m
+  [1m[35mSQL (0.1ms)[0m  INSERT INTO "emails" ("created_at", "from", "mail", "smtp_settings", "to", "updated_at") VALUES (?, ?, ?, ?, ?, ?)  [["created_at", "2014-05-18 15:22:28.505332"], ["from", "from@example.com"], ["mail", "Date: Sun, 18 May 2014 17:22:28 +0200\r\nFrom: from@example.com\r\nTo: custom_smtp_email@example.com\r\nMessage-ID: <5378d0347a140_104c1271e8c4469@zeus.mail>\r\nSubject: Custom SMTP Email Subject\r\nMime-Version: 1.0\r\nContent-Type: text/plain;\r\n charset=UTF-8\r\nContent-Transfer-Encoding: 7bit\r\n\r\nCustom SMTP Email Body"], ["smtp_settings", "---\n:address: localhost\n:port: 25\n:domain: localhost.localdomain\n:user_name: some.user\n:password: some.password\n:authentication: :plain\n:enable_starttls_auto: true\n"], ["to", "custom_smtp_email@example.com"], ["updated_at", "2014-05-18 15:22:28.505332"]]
+  [1m[36m (0.0ms)[0m  [1mRELEASE SAVEPOINT active_record_1[0m
+
+Sent mail to custom_smtp_email@example.com (7.8ms)
+Date: Sun, 18 May 2014 17:22:28 +0200
+From: from@example.com
+To: custom_smtp_email@example.com
+Message-ID: <5378d0347a140_104c1271e8c4469@zeus.mail>
+Subject: Custom SMTP Email Subject
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=UTF-8
+Content-Transfer-Encoding: 7bit
+ar-mailer-settings: ---=0Asmtp_settings:=0A  :address: localhost=0A  :port:
+ 25=0A  :domain: localhost.localdomain=0A  :user_name: some.user=0A  :password:
+ some.password=0A  :authentication: :plain=0A  :enable_starttls_auto: true=0A
+
+Custom SMTP Email Body
+  [1m[35mEmail Load (0.1ms)[0m  SELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1
+  [1m[36m (0.1ms)[0m  [1mrollback transaction[0m
+  [1m[35m (0.0ms)[0m  begin transaction
+----------------------------------------------------------------------------------------------------
+TestMailerTest: test_: ActionMailer::Base.deliver should set custom attributes in the email record. 
+----------------------------------------------------------------------------------------------------
+  [1m[36mEmail Load (0.1ms)[0m  [1mSELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1[0m
+
+TestMailer#custom_attribute_email: processed outbound mail in 4.8ms
+  [1m[35m (0.1ms)[0m  SAVEPOINT active_record_1
+  [1m[36mSQL (0.1ms)[0m  [1mINSERT INTO "emails" ("created_at", "from", "mail", "smtp_settings", "to", "updated_at") VALUES (?, ?, ?, ?, ?, ?)[0m  [["created_at", "2014-05-18 15:22:28.520917"], ["from", "from@example.com"], ["mail", "Date: Sun, 18 May 2014 17:22:28 +0200\r\nFrom: from@example.com\r\nTo: custom_attribute_email@example.com\r\nMessage-ID: <5378d0347dfc3_104c1271e8c45a6@zeus.mail>\r\nSubject: Custom Attribute Email Subject\r\nMime-Version: 1.0\r\nContent-Type: text/plain;\r\n charset=UTF-8\r\nContent-Transfer-Encoding: 7bit\r\n\r\nCustom Attribute Email Body"], ["smtp_settings", nil], ["to", "custom_attribute_email@example.com"], ["updated_at", "2014-05-18 15:22:28.520917"]]
+  [1m[35m (0.0ms)[0m  RELEASE SAVEPOINT active_record_1
+
+Sent mail to custom_attribute_email@example.com (6.7ms)
+Date: Sun, 18 May 2014 17:22:28 +0200
+From: from@example.com
+To: custom_attribute_email@example.com
+Message-ID: <5378d0347dfc3_104c1271e8c45a6@zeus.mail>
+Subject: Custom Attribute Email Subject
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=UTF-8
+Content-Transfer-Encoding: 7bit
+ar-mailer-settings: ---=0Acustom_attributes:=0A  a_number: 42=0A
+
+Custom Attribute Email Body
+  [1m[36mEmail Load (0.1ms)[0m  [1mSELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1[0m
+  [1m[35m (0.2ms)[0m  rollback transaction
+  [1m[36m (0.1ms)[0m  [1mbegin transaction[0m
+----------------------------------------------------------------------------------------------------------------
+TestMailerTest: test_: ActionMailer::Base.deliver should set custom delivery times in the created email record. 
+----------------------------------------------------------------------------------------------------------------
+  [1m[35mEmail Load (0.3ms)[0m  SELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1
+
+TestMailer#delayed_email: processed outbound mail in 7.1ms
+  [1m[36m (0.1ms)[0m  [1mSAVEPOINT active_record_1[0m
+  [1m[35mSQL (0.2ms)[0m  INSERT INTO "emails" ("created_at", "delivery_time", "from", "mail", "smtp_settings", "to", "updated_at") VALUES (?, ?, ?, ?, ?, ?, ?)  [["created_at", "2014-05-18 15:22:28.551994"], ["delivery_time", "2014-05-18 17:22:28.536728"], ["from", "from@example.com"], ["mail", "Date: Sun, 18 May 2014 17:22:28 +0200\r\nFrom: from@example.com\r\nTo: delayed_email@example.com\r\nMessage-ID: <5378d034850eb_104c1271e8c46c5@zeus.mail>\r\nSubject: Delayed Email Subject\r\nMime-Version: 1.0\r\nContent-Type: text/plain;\r\n charset=UTF-8\r\nContent-Transfer-Encoding: 7bit\r\n\r\nDelayed Email Body"], ["smtp_settings", nil], ["to", "delayed_email@example.com"], ["updated_at", "2014-05-18 15:22:28.551994"]]
+  [1m[36m (0.0ms)[0m  [1mRELEASE SAVEPOINT active_record_1[0m
+
+Sent mail to delayed_email@example.com (9.5ms)
+Date: Sun, 18 May 2014 17:22:28 +0200
+From: from@example.com
+To: delayed_email@example.com
+Message-ID: <5378d034850eb_104c1271e8c46c5@zeus.mail>
+Subject: Delayed Email Subject
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=UTF-8
+Content-Transfer-Encoding: 7bit
+ar-mailer-settings: ---=0Adelivery_time: 2014-05-18 19:22:28.536728913
+ +02:00=0A
+
+Delayed Email Body
+  [1m[35mEmail Load (0.1ms)[0m  SELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1
+  [1m[36m (0.1ms)[0m  [1mrollback transaction[0m
+  [1m[36mActiveRecord::SchemaMigration Load (0.1ms)[0m  [1mSELECT "schema_migrations".* FROM "schema_migrations"[0m
+  [1m[35m (0.1ms)[0m  begin transaction
+----------------------------------------------------------------------------------------------------
+TestMailerTest: test_: ActionMailer::Base.deliver should create a new email record in the database. 
+----------------------------------------------------------------------------------------------------
+  [1m[36mEmail Load (0.2ms)[0m  [1mSELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1[0m
+
+TestMailer#basic_email: processed outbound mail in 7.0ms
+  [1m[35m (0.1ms)[0m  SAVEPOINT active_record_1
+  [1m[36mSQL (0.3ms)[0m  [1mINSERT INTO "emails" ("created_at", "from", "mail", "smtp_settings", "to", "updated_at") VALUES (?, ?, ?, ?, ?, ?)[0m  [["created_at", "2014-05-18 15:22:47.708131"], ["from", "from@example.com"], ["mail", "Date: Sun, 18 May 2014 17:22:47 +0200\r\nFrom: from@example.com\r\nTo: basic_email@example.com\r\nMessage-ID: <5378d047a811c_106cad3e8c429ad@zeus.mail>\r\nSubject: Basic Email Subject\r\nMime-Version: 1.0\r\nContent-Type: text/plain;\r\n charset=UTF-8\r\nContent-Transfer-Encoding: 7bit\r\n\r\nBasic Email Body"], ["smtp_settings", nil], ["to", "basic_email@example.com"], ["updated_at", "2014-05-18 15:22:47.708131"]]
+  [1m[35m (0.1ms)[0m  RELEASE SAVEPOINT active_record_1
+
+Sent mail to basic_email@example.com (58.2ms)
+Date: Sun, 18 May 2014 17:22:47 +0200
+From: from@example.com
+To: basic_email@example.com
+Message-ID: <5378d047a811c_106cad3e8c429ad@zeus.mail>
+Subject: Basic Email Subject
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=UTF-8
+Content-Transfer-Encoding: 7bit
+
+Basic Email Body
+  [1m[36mEmail Load (0.1ms)[0m  [1mSELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1[0m
+  [1m[35m (0.1ms)[0m  rollback transaction
+  [1m[36m (0.1ms)[0m  [1mbegin transaction[0m
+-------------------------------------------------------------------------------------------------------
+TestMailerTest: test_: ActionMailer::Base.deliver should set custom SMTP settings in the email record. 
+-------------------------------------------------------------------------------------------------------
+  [1m[35mEmail Load (0.2ms)[0m  SELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1
+
+TestMailer#custom_smtp_email: processed outbound mail in 7.5ms
+  [1m[36m (0.1ms)[0m  [1mSAVEPOINT active_record_1[0m
+  [1m[35mSQL (0.2ms)[0m  INSERT INTO "emails" ("created_at", "from", "mail", "smtp_settings", "to", "updated_at") VALUES (?, ?, ?, ?, ?, ?)  [["created_at", "2014-05-18 15:22:47.732336"], ["from", "from@example.com"], ["mail", "Date: Sun, 18 May 2014 17:22:47 +0200\r\nFrom: from@example.com\r\nTo: custom_smtp_email@example.com\r\nMessage-ID: <5378d047b0fd8_106cad3e8c430e4@zeus.mail>\r\nSubject: Custom SMTP Email Subject\r\nMime-Version: 1.0\r\nContent-Type: text/plain;\r\n charset=UTF-8\r\nContent-Transfer-Encoding: 7bit\r\n\r\nCustom SMTP Email Body"], ["smtp_settings", "---\n:address: localhost\n:port: 25\n:domain: localhost.localdomain\n:user_name: some.user\n:password: some.password\n:authentication: :plain\n:enable_starttls_auto: true\n"], ["to", "custom_smtp_email@example.com"], ["updated_at", "2014-05-18 15:22:47.732336"]]
+  [1m[36m (0.1ms)[0m  [1mRELEASE SAVEPOINT active_record_1[0m
+
+Sent mail to custom_smtp_email@example.com (10.8ms)
+Date: Sun, 18 May 2014 17:22:47 +0200
+From: from@example.com
+To: custom_smtp_email@example.com
+Message-ID: <5378d047b0fd8_106cad3e8c430e4@zeus.mail>
+Subject: Custom SMTP Email Subject
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=UTF-8
+Content-Transfer-Encoding: 7bit
+ar-mailer-settings: ---=0Asmtp_settings:=0A  :address: localhost=0A  :port:
+ 25=0A  :domain: localhost.localdomain=0A  :user_name: some.user=0A  :password:
+ some.password=0A  :authentication: :plain=0A  :enable_starttls_auto: true=0A
+
+Custom SMTP Email Body
+  [1m[35mEmail Load (0.2ms)[0m  SELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1
+  [1m[36m (0.1ms)[0m  [1mrollback transaction[0m
+  [1m[35m (0.1ms)[0m  begin transaction
+----------------------------------------------------------------------------------------------------
+TestMailerTest: test_: ActionMailer::Base.deliver should set custom attributes in the email record. 
+----------------------------------------------------------------------------------------------------
+  [1m[36mEmail Load (0.2ms)[0m  [1mSELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1[0m
+
+TestMailer#custom_attribute_email: processed outbound mail in 6.7ms
+  [1m[35m (0.1ms)[0m  SAVEPOINT active_record_1
+  [1m[36mSQL (0.2ms)[0m  [1mINSERT INTO "emails" ("created_at", "from", "mail", "smtp_settings", "to", "updated_at") VALUES (?, ?, ?, ?, ?, ?)[0m  [["created_at", "2014-05-18 15:22:47.754386"], ["from", "from@example.com"], ["mail", "Date: Sun, 18 May 2014 17:22:47 +0200\r\nFrom: from@example.com\r\nTo: custom_attribute_email@example.com\r\nMessage-ID: <5378d047b67af_106cad3e8c431a6@zeus.mail>\r\nSubject: Custom Attribute Email Subject\r\nMime-Version: 1.0\r\nContent-Type: text/plain;\r\n charset=UTF-8\r\nContent-Transfer-Encoding: 7bit\r\n\r\nCustom Attribute Email Body"], ["smtp_settings", nil], ["to", "custom_attribute_email@example.com"], ["updated_at", "2014-05-18 15:22:47.754386"]]
+  [1m[35m (0.1ms)[0m  RELEASE SAVEPOINT active_record_1
+
+Sent mail to custom_attribute_email@example.com (9.5ms)
+Date: Sun, 18 May 2014 17:22:47 +0200
+From: from@example.com
+To: custom_attribute_email@example.com
+Message-ID: <5378d047b67af_106cad3e8c431a6@zeus.mail>
+Subject: Custom Attribute Email Subject
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=UTF-8
+Content-Transfer-Encoding: 7bit
+ar-mailer-settings: ---=0Acustom_attributes:=0A  a_number: 42=0A
+
+Custom Attribute Email Body
+  [1m[36mEmail Load (0.2ms)[0m  [1mSELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1[0m
+  [1m[35m (0.2ms)[0m  rollback transaction
+  [1m[36m (0.1ms)[0m  [1mbegin transaction[0m
+----------------------------------------------------------------------------------------------------------------
+TestMailerTest: test_: ActionMailer::Base.deliver should set custom delivery times in the created email record. 
+----------------------------------------------------------------------------------------------------------------
+  [1m[35mEmail Load (0.2ms)[0m  SELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1
+
+TestMailer#delayed_email: processed outbound mail in 6.9ms
+  [1m[36m (0.1ms)[0m  [1mSAVEPOINT active_record_1[0m
+  [1m[35mSQL (0.2ms)[0m  INSERT INTO "emails" ("created_at", "delivery_time", "from", "mail", "smtp_settings", "to", "updated_at") VALUES (?, ?, ?, ?, ?, ?, ?)  [["created_at", "2014-05-18 15:22:47.786316"], ["delivery_time", "2014-05-18 17:22:47.770990"], ["from", "from@example.com"], ["mail", "Date: Sun, 18 May 2014 17:22:47 +0200\r\nFrom: from@example.com\r\nTo: delayed_email@example.com\r\nMessage-ID: <5378d047be315_106cad3e8c432a7@zeus.mail>\r\nSubject: Delayed Email Subject\r\nMime-Version: 1.0\r\nContent-Type: text/plain;\r\n charset=UTF-8\r\nContent-Transfer-Encoding: 7bit\r\n\r\nDelayed Email Body"], ["smtp_settings", nil], ["to", "delayed_email@example.com"], ["updated_at", "2014-05-18 15:22:47.786316"]]
+  [1m[36m (0.0ms)[0m  [1mRELEASE SAVEPOINT active_record_1[0m
+
+Sent mail to delayed_email@example.com (9.9ms)
+Date: Sun, 18 May 2014 17:22:47 +0200
+From: from@example.com
+To: delayed_email@example.com
+Message-ID: <5378d047be315_106cad3e8c432a7@zeus.mail>
+Subject: Delayed Email Subject
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=UTF-8
+Content-Transfer-Encoding: 7bit
+ar-mailer-settings: ---=0Adelivery_time: 2014-05-18 19:22:47.770990541
+ +02:00=0A
+
+Delayed Email Body
+  [1m[35mEmail Load (0.1ms)[0m  SELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1
+  [1m[36m (0.1ms)[0m  [1mrollback transaction[0m
+  [1m[36mActiveRecord::SchemaMigration Load (0.1ms)[0m  [1mSELECT "schema_migrations".* FROM "schema_migrations"[0m
+  [1m[35m (0.1ms)[0m  begin transaction
+----------------------------------------------------------------------------------------------------
+TestMailerTest: test_: ActionMailer::Base.deliver should create a new email record in the database. 
+----------------------------------------------------------------------------------------------------
+  [1m[36mEmail Load (0.1ms)[0m  [1mSELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1[0m
+
+TestMailer#basic_email: processed outbound mail in 5.3ms
+  [1m[35m (0.1ms)[0m  SAVEPOINT active_record_1
+  [1m[36mSQL (0.4ms)[0m  [1mINSERT INTO "emails" ("created_at", "from", "mail", "smtp_settings", "to", "updated_at") VALUES (?, ?, ?, ?, ?, ?)[0m  [["created_at", "2014-05-18 15:36:27.760620"], ["from", "from@example.com"], ["mail", "Date: Sun, 18 May 2014 17:36:27 +0200\r\nFrom: from@example.com\r\nTo: basic_email@example.com\r\nMessage-ID: <5378d37bb4a67_118a54de907084@zeus.mail>\r\nSubject: Basic Email Subject\r\nMime-Version: 1.0\r\nContent-Type: text/plain;\r\n charset=UTF-8\r\nContent-Transfer-Encoding: 7bit\r\n\r\nBasic Email Body"], ["smtp_settings", nil], ["to", "basic_email@example.com"], ["updated_at", "2014-05-18 15:36:27.760620"]]
+  [1m[35m (0.1ms)[0m  RELEASE SAVEPOINT active_record_1
+
+Sent mail to basic_email@example.com (61.4ms)
+Date: Sun, 18 May 2014 17:36:27 +0200
+From: from@example.com
+To: basic_email@example.com
+Message-ID: <5378d37bb4a67_118a54de907084@zeus.mail>
+Subject: Basic Email Subject
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=UTF-8
+Content-Transfer-Encoding: 7bit
+
+Basic Email Body
+  [1m[36mEmail Load (0.2ms)[0m  [1mSELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1[0m
+  [1m[35m (0.1ms)[0m  rollback transaction
+  [1m[36m (0.1ms)[0m  [1mbegin transaction[0m
+-------------------------------------------------------------------------------------------------------
+TestMailerTest: test_: ActionMailer::Base.deliver should set custom SMTP settings in the email record. 
+-------------------------------------------------------------------------------------------------------
+  [1m[35mEmail Load (0.2ms)[0m  SELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1
+
+TestMailer#custom_smtp_email: processed outbound mail in 7.9ms
+  [1m[36m (0.1ms)[0m  [1mSAVEPOINT active_record_1[0m
+  [1m[35mSQL (0.2ms)[0m  INSERT INTO "emails" ("created_at", "from", "mail", "smtp_settings", "to", "updated_at") VALUES (?, ?, ?, ?, ?, ?)  [["created_at", "2014-05-18 15:36:27.785462"], ["from", "from@example.com"], ["mail", "Date: Sun, 18 May 2014 17:36:27 +0200\r\nFrom: from@example.com\r\nTo: custom_smtp_email@example.com\r\nMessage-ID: <5378d37bbe0f9_118a54de907092c@zeus.mail>\r\nSubject: Custom SMTP Email Subject\r\nMime-Version: 1.0\r\nContent-Type: text/plain;\r\n charset=UTF-8\r\nContent-Transfer-Encoding: 7bit\r\n\r\nCustom SMTP Email Body"], ["smtp_settings", "---\n:address: localhost\n:port: 25\n:domain: localhost.localdomain\n:user_name: some.user\n:password: some.password\n:authentication: :plain\n:enable_starttls_auto: true\n"], ["to", "custom_smtp_email@example.com"], ["updated_at", "2014-05-18 15:36:27.785462"]]
+  [1m[36m (0.0ms)[0m  [1mRELEASE SAVEPOINT active_record_1[0m
+
+Sent mail to custom_smtp_email@example.com (10.3ms)
+Date: Sun, 18 May 2014 17:36:27 +0200
+From: from@example.com
+To: custom_smtp_email@example.com
+Message-ID: <5378d37bbe0f9_118a54de907092c@zeus.mail>
+Subject: Custom SMTP Email Subject
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=UTF-8
+Content-Transfer-Encoding: 7bit
+ar-mailer-settings: ---=0Asmtp_settings:=0A  :address: localhost=0A  :port:
+ 25=0A  :domain: localhost.localdomain=0A  :user_name: some.user=0A  :password:
+ some.password=0A  :authentication: :plain=0A  :enable_starttls_auto: true=0A
+
+Custom SMTP Email Body
+  [1m[35mEmail Load (0.1ms)[0m  SELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1
+  [1m[36m (0.1ms)[0m  [1mrollback transaction[0m
+  [1m[35m (0.0ms)[0m  begin transaction
+----------------------------------------------------------------------------------------------------
+TestMailerTest: test_: ActionMailer::Base.deliver should set custom attributes in the email record. 
+----------------------------------------------------------------------------------------------------
+  [1m[36mEmail Load (0.2ms)[0m  [1mSELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1[0m
+
+TestMailer#custom_attribute_email: processed outbound mail in 4.8ms
+  [1m[35m (0.1ms)[0m  SAVEPOINT active_record_1
+  [1m[36mSQL (0.2ms)[0m  [1mINSERT INTO "emails" ("created_at", "from", "mail", "smtp_settings", "to", "updated_at") VALUES (?, ?, ?, ?, ?, ?)[0m  [["created_at", "2014-05-18 15:36:27.802011"], ["from", "from@example.com"], ["mail", "Date: Sun, 18 May 2014 17:36:27 +0200\r\nFrom: from@example.com\r\nTo: custom_attribute_email@example.com\r\nMessage-ID: <5378d37bc29b7_118a54de9071048@zeus.mail>\r\nSubject: Custom Attribute Email Subject\r\nMime-Version: 1.0\r\nContent-Type: text/plain;\r\n charset=UTF-8\r\nContent-Transfer-Encoding: 7bit\r\n\r\nCustom Attribute Email Body"], ["smtp_settings", nil], ["to", "custom_attribute_email@example.com"], ["updated_at", "2014-05-18 15:36:27.802011"]]
+  [1m[35m (0.0ms)[0m  RELEASE SAVEPOINT active_record_1
+
+Sent mail to custom_attribute_email@example.com (7.1ms)
+Date: Sun, 18 May 2014 17:36:27 +0200
+From: from@example.com
+To: custom_attribute_email@example.com
+Message-ID: <5378d37bc29b7_118a54de9071048@zeus.mail>
+Subject: Custom Attribute Email Subject
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=UTF-8
+Content-Transfer-Encoding: 7bit
+ar-mailer-settings: ---=0Acustom_attributes:=0A  a_number: 42=0A
+
+Custom Attribute Email Body
+  [1m[36mEmail Load (0.3ms)[0m  [1mSELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1[0m
+  [1m[35m (0.2ms)[0m  rollback transaction
+  [1m[36m (0.1ms)[0m  [1mbegin transaction[0m
+----------------------------------------------------------------------------------------------------------------
+TestMailerTest: test_: ActionMailer::Base.deliver should set custom delivery times in the created email record. 
+----------------------------------------------------------------------------------------------------------------
+  [1m[35mEmail Load (0.3ms)[0m  SELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1
+
+TestMailer#delayed_email: processed outbound mail in 7.1ms
+  [1m[36m (0.1ms)[0m  [1mSAVEPOINT active_record_1[0m
+  [1m[35mSQL (0.2ms)[0m  INSERT INTO "emails" ("created_at", "delivery_time", "from", "mail", "smtp_settings", "to", "updated_at") VALUES (?, ?, ?, ?, ?, ?, ?)  [["created_at", "2014-05-18 15:36:27.832149"], ["delivery_time", "2014-05-18 17:36:27.816594"], ["from", "from@example.com"], ["mail", "Date: Sun, 18 May 2014 17:36:27 +0200\r\nFrom: from@example.com\r\nTo: delayed_email@example.com\r\nMessage-ID: <5378d37bc9614_118a54de907118b@zeus.mail>\r\nSubject: Delayed Email Subject\r\nMime-Version: 1.0\r\nContent-Type: text/plain;\r\n charset=UTF-8\r\nContent-Transfer-Encoding: 7bit\r\n\r\nDelayed Email Body"], ["smtp_settings", nil], ["to", "delayed_email@example.com"], ["updated_at", "2014-05-18 15:36:27.832149"]]
+  [1m[36m (0.0ms)[0m  [1mRELEASE SAVEPOINT active_record_1[0m
+
+Sent mail to delayed_email@example.com (9.9ms)
+Date: Sun, 18 May 2014 17:36:27 +0200
+From: from@example.com
+To: delayed_email@example.com
+Message-ID: <5378d37bc9614_118a54de907118b@zeus.mail>
+Subject: Delayed Email Subject
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=UTF-8
+Content-Transfer-Encoding: 7bit
+ar-mailer-settings: ---=0Adelivery_time: 2014-05-18 19:36:27.816594867
+ +02:00=0A
+
+Delayed Email Body
+  [1m[35mEmail Load (0.1ms)[0m  SELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1
+  [1m[36m (0.1ms)[0m  [1mrollback transaction[0m
+  [1m[36mActiveRecord::SchemaMigration Load (0.1ms)[0m  [1mSELECT "schema_migrations".* FROM "schema_migrations"[0m
+  [1m[35m (0.1ms)[0m  begin transaction
+----------------------------------------------------------------------------------------------------
+TestMailerTest: test_: ActionMailer::Base.deliver should create a new email record in the database. 
+----------------------------------------------------------------------------------------------------
+  [1m[36mEmail Load (0.1ms)[0m  [1mSELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1[0m
+
+TestMailer#basic_email: processed outbound mail in 5.1ms
+  [1m[35m (0.1ms)[0m  SAVEPOINT active_record_1
+  [1m[36mSQL (0.4ms)[0m  [1mINSERT INTO "emails" ("created_at", "from", "mail", "smtp_settings", "to", "updated_at") VALUES (?, ?, ?, ?, ?, ?)[0m  [["created_at", "2014-05-18 15:37:18.650473"], ["from", "from@example.com"], ["mail", "Date: Sun, 18 May 2014 17:37:18 +0200\r\nFrom: from@example.com\r\nTo: basic_email@example.com\r\nMessage-ID: <5378d3ae99c01_11efbfde983009d@zeus.mail>\r\nSubject: Basic Email Subject\r\nMime-Version: 1.0\r\nContent-Type: text/plain;\r\n charset=UTF-8\r\nContent-Transfer-Encoding: 7bit\r\n\r\nBasic Email Body"], ["smtp_settings", nil], ["to", "basic_email@example.com"], ["updated_at", "2014-05-18 15:37:18.650473"]]
+  [1m[35m (0.1ms)[0m  RELEASE SAVEPOINT active_record_1
+
+Sent mail to basic_email@example.com (60.7ms)
+Date: Sun, 18 May 2014 17:37:18 +0200
+From: from@example.com
+To: basic_email@example.com
+Message-ID: <5378d3ae99c01_11efbfde983009d@zeus.mail>
+Subject: Basic Email Subject
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=UTF-8
+Content-Transfer-Encoding: 7bit
+
+Basic Email Body
+  [1m[36mEmail Load (0.2ms)[0m  [1mSELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1[0m
+  [1m[35m (0.1ms)[0m  rollback transaction
+  [1m[36m (0.1ms)[0m  [1mbegin transaction[0m
+-------------------------------------------------------------------------------------------------------
+TestMailerTest: test_: ActionMailer::Base.deliver should set custom SMTP settings in the email record. 
+-------------------------------------------------------------------------------------------------------
+  [1m[35mEmail Load (0.2ms)[0m  SELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1
+
+TestMailer#custom_smtp_email: processed outbound mail in 7.9ms
+  [1m[36m (0.1ms)[0m  [1mSAVEPOINT active_record_1[0m
+  [1m[35mSQL (0.2ms)[0m  INSERT INTO "emails" ("created_at", "from", "mail", "smtp_settings", "to", "updated_at") VALUES (?, ?, ?, ?, ?, ?)  [["created_at", "2014-05-18 15:37:18.675679"], ["from", "from@example.com"], ["mail", "Date: Sun, 18 May 2014 17:37:18 +0200\r\nFrom: from@example.com\r\nTo: custom_smtp_email@example.com\r\nMessage-ID: <5378d3aea3263_11efbfde9830171@zeus.mail>\r\nSubject: Custom SMTP Email Subject\r\nMime-Version: 1.0\r\nContent-Type: text/plain;\r\n charset=UTF-8\r\nContent-Transfer-Encoding: 7bit\r\n\r\nCustom SMTP Email Body"], ["smtp_settings", "---\n:address: localhost\n:port: 25\n:domain: localhost.localdomain\n:user_name: some.user\n:password: some.password\n:authentication: :plain\n:enable_starttls_auto: true\n"], ["to", "custom_smtp_email@example.com"], ["updated_at", "2014-05-18 15:37:18.675679"]]
+  [1m[36m (0.1ms)[0m  [1mRELEASE SAVEPOINT active_record_1[0m
+
+Sent mail to custom_smtp_email@example.com (10.9ms)
+Date: Sun, 18 May 2014 17:37:18 +0200
+From: from@example.com
+To: custom_smtp_email@example.com
+Message-ID: <5378d3aea3263_11efbfde9830171@zeus.mail>
+Subject: Custom SMTP Email Subject
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=UTF-8
+Content-Transfer-Encoding: 7bit
+ar-mailer-settings: ---=0Asmtp_settings:=0A  :address: localhost=0A  :port:
+ 25=0A  :domain: localhost.localdomain=0A  :user_name: some.user=0A  :password:
+ some.password=0A  :authentication: :plain=0A  :enable_starttls_auto: true=0A
+
+Custom SMTP Email Body
+  [1m[35mEmail Load (0.2ms)[0m  SELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1
+  [1m[36m (0.1ms)[0m  [1mrollback transaction[0m
+  [1m[35m (0.1ms)[0m  begin transaction
+----------------------------------------------------------------------------------------------------
+TestMailerTest: test_: ActionMailer::Base.deliver should set custom attributes in the email record. 
+----------------------------------------------------------------------------------------------------
+  [1m[36mEmail Load (0.2ms)[0m  [1mSELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1[0m
+
+TestMailer#custom_attribute_email: processed outbound mail in 7.2ms
+  [1m[35m (0.1ms)[0m  SAVEPOINT active_record_1
+  [1m[36mSQL (0.2ms)[0m  [1mINSERT INTO "emails" ("created_at", "from", "mail", "smtp_settings", "to", "updated_at") VALUES (?, ?, ?, ?, ?, ?)[0m  [["created_at", "2014-05-18 15:37:18.697802"], ["from", "from@example.com"], ["mail", "Date: Sun, 18 May 2014 17:37:18 +0200\r\nFrom: from@example.com\r\nTo: custom_attribute_email@example.com\r\nMessage-ID: <5378d3aea8b31_11efbfde9830278@zeus.mail>\r\nSubject: Custom Attribute Email Subject\r\nMime-Version: 1.0\r\nContent-Type: text/plain;\r\n charset=UTF-8\r\nContent-Transfer-Encoding: 7bit\r\n\r\nCustom Attribute Email Body"], ["smtp_settings", nil], ["to", "custom_attribute_email@example.com"], ["updated_at", "2014-05-18 15:37:18.697802"]]
+  [1m[35m (0.1ms)[0m  RELEASE SAVEPOINT active_record_1
+
+Sent mail to custom_attribute_email@example.com (9.4ms)
+Date: Sun, 18 May 2014 17:37:18 +0200
+From: from@example.com
+To: custom_attribute_email@example.com
+Message-ID: <5378d3aea8b31_11efbfde9830278@zeus.mail>
+Subject: Custom Attribute Email Subject
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=UTF-8
+Content-Transfer-Encoding: 7bit
+ar-mailer-settings: ---=0Acustom_attributes:=0A  a_number: 42=0A
+
+Custom Attribute Email Body
+  [1m[36mEmail Load (0.2ms)[0m  [1mSELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1[0m
+  [1m[35m (0.2ms)[0m  rollback transaction
+  [1m[36m (0.1ms)[0m  [1mbegin transaction[0m
+----------------------------------------------------------------------------------------------------------------
+TestMailerTest: test_: ActionMailer::Base.deliver should set custom delivery times in the created email record. 
+----------------------------------------------------------------------------------------------------------------
+  [1m[35mEmail Load (0.2ms)[0m  SELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1
+
+TestMailer#delayed_email: processed outbound mail in 5.2ms
+  [1m[36m (0.1ms)[0m  [1mSAVEPOINT active_record_1[0m
+  [1m[35mSQL (0.2ms)[0m  INSERT INTO "emails" ("created_at", "delivery_time", "from", "mail", "smtp_settings", "to", "updated_at") VALUES (?, ?, ?, ?, ?, ?, ?)  [["created_at", "2014-05-18 15:37:18.724917"], ["delivery_time", "2014-05-18 17:37:18.713332"], ["from", "from@example.com"], ["mail", "Date: Sun, 18 May 2014 17:37:18 +0200\r\nFrom: from@example.com\r\nTo: delayed_email@example.com\r\nMessage-ID: <5378d3aeafa35_11efbfde9830314@zeus.mail>\r\nSubject: Delayed Email Subject\r\nMime-Version: 1.0\r\nContent-Type: text/plain;\r\n charset=UTF-8\r\nContent-Transfer-Encoding: 7bit\r\n\r\nDelayed Email Body"], ["smtp_settings", nil], ["to", "delayed_email@example.com"], ["updated_at", "2014-05-18 15:37:18.724917"]]
+  [1m[36m (0.0ms)[0m  [1mRELEASE SAVEPOINT active_record_1[0m
+
+Sent mail to delayed_email@example.com (7.7ms)
+Date: Sun, 18 May 2014 17:37:18 +0200
+From: from@example.com
+To: delayed_email@example.com
+Message-ID: <5378d3aeafa35_11efbfde9830314@zeus.mail>
+Subject: Delayed Email Subject
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=UTF-8
+Content-Transfer-Encoding: 7bit
+ar-mailer-settings: ---=0Adelivery_time: 2014-05-18 19:37:18.713332324
+ +02:00=0A
+
+Delayed Email Body
+  [1m[35mEmail Load (0.1ms)[0m  SELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1
+  [1m[36m (0.1ms)[0m  [1mrollback transaction[0m
+  [1m[36mActiveRecord::SchemaMigration Load (0.1ms)[0m  [1mSELECT "schema_migrations".* FROM "schema_migrations"[0m
+  [1m[35m (0.1ms)[0m  begin transaction
+----------------------------------------------------------------------------------------------------
+TestMailerTest: test_: ActionMailer::Base.deliver should create a new email record in the database. 
+----------------------------------------------------------------------------------------------------
+  [1m[36mEmail Load (0.1ms)[0m  [1mSELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1[0m
+
+TestMailer#basic_email: processed outbound mail in 6.4ms
+  [1m[35m (0.1ms)[0m  SAVEPOINT active_record_1
+  [1m[36mSQL (0.4ms)[0m  [1mINSERT INTO "emails" ("created_at", "from", "mail", "smtp_settings", "to", "updated_at") VALUES (?, ?, ?, ?, ?, ?)[0m  [["created_at", "2014-05-18 15:37:28.888668"], ["from", "from@example.com"], ["mail", "Date: Sun, 18 May 2014 17:37:28 +0200\r\nFrom: from@example.com\r\nTo: basic_email@example.com\r\nMessage-ID: <5378d3b8d4097_121111fde88295c6@zeus.mail>\r\nSubject: Basic Email Subject\r\nMime-Version: 1.0\r\nContent-Type: text/plain;\r\n charset=UTF-8\r\nContent-Transfer-Encoding: 7bit\r\n\r\nBasic Email Body"], ["smtp_settings", nil], ["to", "basic_email@example.com"], ["updated_at", "2014-05-18 15:37:28.888668"]]
+  [1m[35m (0.1ms)[0m  RELEASE SAVEPOINT active_record_1
+
+Sent mail to basic_email@example.com (61.3ms)
+Date: Sun, 18 May 2014 17:37:28 +0200
+From: from@example.com
+To: basic_email@example.com
+Message-ID: <5378d3b8d4097_121111fde88295c6@zeus.mail>
+Subject: Basic Email Subject
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=UTF-8
+Content-Transfer-Encoding: 7bit
+
+Basic Email Body
+  [1m[36mEmail Load (0.2ms)[0m  [1mSELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1[0m
+  [1m[35m (0.1ms)[0m  rollback transaction
+  [1m[36m (0.1ms)[0m  [1mbegin transaction[0m
+-------------------------------------------------------------------------------------------------------
+TestMailerTest: test_: ActionMailer::Base.deliver should set custom SMTP settings in the email record. 
+-------------------------------------------------------------------------------------------------------
+  [1m[35mEmail Load (0.2ms)[0m  SELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1
+
+TestMailer#custom_smtp_email: processed outbound mail in 6.2ms
+  [1m[36m (0.1ms)[0m  [1mSAVEPOINT active_record_1[0m
+  [1m[35mSQL (0.2ms)[0m  INSERT INTO "emails" ("created_at", "from", "mail", "smtp_settings", "to", "updated_at") VALUES (?, ?, ?, ?, ?, ?)  [["created_at", "2014-05-18 15:37:28.909967"], ["from", "from@example.com"], ["mail", "Date: Sun, 18 May 2014 17:37:28 +0200\r\nFrom: from@example.com\r\nTo: custom_smtp_email@example.com\r\nMessage-ID: <5378d3b8dcc92_121111fde88296b3@zeus.mail>\r\nSubject: Custom SMTP Email Subject\r\nMime-Version: 1.0\r\nContent-Type: text/plain;\r\n charset=UTF-8\r\nContent-Transfer-Encoding: 7bit\r\n\r\nCustom SMTP Email Body"], ["smtp_settings", "---\n:address: localhost\n:port: 25\n:domain: localhost.localdomain\n:user_name: some.user\n:password: some.password\n:authentication: :plain\n:enable_starttls_auto: true\n"], ["to", "custom_smtp_email@example.com"], ["updated_at", "2014-05-18 15:37:28.909967"]]
+  [1m[36m (0.0ms)[0m  [1mRELEASE SAVEPOINT active_record_1[0m
+
+Sent mail to custom_smtp_email@example.com (8.6ms)
+Date: Sun, 18 May 2014 17:37:28 +0200
+From: from@example.com
+To: custom_smtp_email@example.com
+Message-ID: <5378d3b8dcc92_121111fde88296b3@zeus.mail>
+Subject: Custom SMTP Email Subject
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=UTF-8
+Content-Transfer-Encoding: 7bit
+ar-mailer-settings: ---=0Asmtp_settings:=0A  :address: localhost=0A  :port:
+ 25=0A  :domain: localhost.localdomain=0A  :user_name: some.user=0A  :password:
+ some.password=0A  :authentication: :plain=0A  :enable_starttls_auto: true=0A
+
+Custom SMTP Email Body
+  [1m[35mEmail Load (0.1ms)[0m  SELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1
+  [1m[36m (0.1ms)[0m  [1mrollback transaction[0m
+  [1m[35m (0.0ms)[0m  begin transaction
+----------------------------------------------------------------------------------------------------
+TestMailerTest: test_: ActionMailer::Base.deliver should set custom attributes in the email record. 
+----------------------------------------------------------------------------------------------------
+  [1m[36mEmail Load (0.2ms)[0m  [1mSELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1[0m
+
+TestMailer#custom_attribute_email: processed outbound mail in 5.0ms
+  [1m[35m (0.1ms)[0m  SAVEPOINT active_record_1
+  [1m[36mSQL (0.2ms)[0m  [1mINSERT INTO "emails" ("created_at", "from", "mail", "smtp_settings", "to", "updated_at") VALUES (?, ?, ?, ?, ?, ?)[0m  [["created_at", "2014-05-18 15:37:28.927073"], ["from", "from@example.com"], ["mail", "Date: Sun, 18 May 2014 17:37:28 +0200\r\nFrom: from@example.com\r\nTo: custom_attribute_email@example.com\r\nMessage-ID: <5378d3b8e10df_121111fde8829767@zeus.mail>\r\nSubject: Custom Attribute Email Subject\r\nMime-Version: 1.0\r\nContent-Type: text/plain;\r\n charset=UTF-8\r\nContent-Transfer-Encoding: 7bit\r\n\r\nCustom Attribute Email Body"], ["smtp_settings", nil], ["to", "custom_attribute_email@example.com"], ["updated_at", "2014-05-18 15:37:28.927073"]]
+  [1m[35m (0.0ms)[0m  RELEASE SAVEPOINT active_record_1
+
+Sent mail to custom_attribute_email@example.com (7.2ms)
+Date: Sun, 18 May 2014 17:37:28 +0200
+From: from@example.com
+To: custom_attribute_email@example.com
+Message-ID: <5378d3b8e10df_121111fde8829767@zeus.mail>
+Subject: Custom Attribute Email Subject
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=UTF-8
+Content-Transfer-Encoding: 7bit
+ar-mailer-settings: ---=0Acustom_attributes:=0A  a_number: 42=0A
+
+Custom Attribute Email Body
+  [1m[36mEmail Load (0.1ms)[0m  [1mSELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1[0m
+  [1m[35m (0.3ms)[0m  rollback transaction
+  [1m[36m (0.1ms)[0m  [1mbegin transaction[0m
+----------------------------------------------------------------------------------------------------------------
+TestMailerTest: test_: ActionMailer::Base.deliver should set custom delivery times in the created email record. 
+----------------------------------------------------------------------------------------------------------------
+  [1m[35mEmail Load (0.3ms)[0m  SELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1
+
+TestMailer#delayed_email: processed outbound mail in 7.8ms
+  [1m[36m (0.1ms)[0m  [1mSAVEPOINT active_record_1[0m
+  [1m[35mSQL (0.2ms)[0m  INSERT INTO "emails" ("created_at", "delivery_time", "from", "mail", "smtp_settings", "to", "updated_at") VALUES (?, ?, ?, ?, ?, ?, ?)  [["created_at", "2014-05-18 15:37:28.958669"], ["delivery_time", "2014-05-18 17:37:28.942257"], ["from", "from@example.com"], ["mail", "Date: Sun, 18 May 2014 17:37:28 +0200\r\nFrom: from@example.com\r\nTo: delayed_email@example.com\r\nMessage-ID: <5378d3b8e8360_121111fde8829873@zeus.mail>\r\nSubject: Delayed Email Subject\r\nMime-Version: 1.0\r\nContent-Type: text/plain;\r\n charset=UTF-8\r\nContent-Transfer-Encoding: 7bit\r\n\r\nDelayed Email Body"], ["smtp_settings", nil], ["to", "delayed_email@example.com"], ["updated_at", "2014-05-18 15:37:28.958669"]]
+  [1m[36m (0.0ms)[0m  [1mRELEASE SAVEPOINT active_record_1[0m
+
+Sent mail to delayed_email@example.com (10.1ms)
+Date: Sun, 18 May 2014 17:37:28 +0200
+From: from@example.com
+To: delayed_email@example.com
+Message-ID: <5378d3b8e8360_121111fde8829873@zeus.mail>
+Subject: Delayed Email Subject
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=UTF-8
+Content-Transfer-Encoding: 7bit
+ar-mailer-settings: ---=0Adelivery_time: 2014-05-18 19:37:28.942257072
+ +02:00=0A
+
+Delayed Email Body
+  [1m[35mEmail Load (0.1ms)[0m  SELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1
+  [1m[36m (0.1ms)[0m  [1mrollback transaction[0m
+  [1m[36mActiveRecord::SchemaMigration Load (0.1ms)[0m  [1mSELECT "schema_migrations".* FROM "schema_migrations"[0m
+  [1m[35m (0.1ms)[0m  begin transaction
+----------------------------------------------------------------------------------------------------
+TestMailerTest: test_: ActionMailer::Base.deliver should create a new email record in the database. 
+----------------------------------------------------------------------------------------------------
+  [1m[36mEmail Load (0.1ms)[0m  [1mSELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1[0m
+
+TestMailer#basic_email: processed outbound mail in 5.0ms
+  [1m[35m (0.1ms)[0m  SAVEPOINT active_record_1
+  [1m[36mSQL (0.3ms)[0m  [1mINSERT INTO "emails" ("created_at", "from", "mail", "smtp_settings", "to", "updated_at") VALUES (?, ?, ?, ?, ?, ?)[0m  [["created_at", "2014-05-18 15:38:01.982214"], ["from", "from@example.com"], ["mail", "Date: Sun, 18 May 2014 17:38:01 +0200\r\nFrom: from@example.com\r\nTo: basic_email@example.com\r\nMessage-ID: <5378d3d9ec53f_124df61e901404d@zeus.mail>\r\nSubject: Basic Email Subject\r\nMime-Version: 1.0\r\nContent-Type: text/plain;\r\n charset=UTF-8\r\nContent-Transfer-Encoding: 7bit\r\n\r\nBasic Email Body"], ["smtp_settings", nil], ["to", "basic_email@example.com"], ["updated_at", "2014-05-18 15:38:01.982214"]]
+  [1m[35m (0.1ms)[0m  RELEASE SAVEPOINT active_record_1
+
+Sent mail to basic_email@example.com (51.3ms)
+Date: Sun, 18 May 2014 17:38:01 +0200
+From: from@example.com
+To: basic_email@example.com
+Message-ID: <5378d3d9ec53f_124df61e901404d@zeus.mail>
+Subject: Basic Email Subject
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=UTF-8
+Content-Transfer-Encoding: 7bit
+
+Basic Email Body
+  [1m[36mEmail Load (0.2ms)[0m  [1mSELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1[0m
+  [1m[35m (0.1ms)[0m  rollback transaction
+  [1m[36m (0.1ms)[0m  [1mbegin transaction[0m
+-------------------------------------------------------------------------------------------------------
+TestMailerTest: test_: ActionMailer::Base.deliver should set custom SMTP settings in the email record. 
+-------------------------------------------------------------------------------------------------------
+  [1m[35mEmail Load (0.2ms)[0m  SELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1
+
+TestMailer#custom_smtp_email: processed outbound mail in 7.7ms
+  [1m[36m (0.1ms)[0m  [1mSAVEPOINT active_record_1[0m
+  [1m[35mSQL (0.2ms)[0m  INSERT INTO "emails" ("created_at", "from", "mail", "smtp_settings", "to", "updated_at") VALUES (?, ?, ?, ?, ?, ?)  [["created_at", "2014-05-18 15:38:02.006418"], ["from", "from@example.com"], ["mail", "Date: Sun, 18 May 2014 17:38:01 +0200\r\nFrom: from@example.com\r\nTo: custom_smtp_email@example.com\r\nMessage-ID: <5378d3d9f3f03_124df61e90141f8@zeus.mail>\r\nSubject: Custom SMTP Email Subject\r\nMime-Version: 1.0\r\nContent-Type: text/plain;\r\n charset=UTF-8\r\nContent-Transfer-Encoding: 7bit\r\n\r\nCustom SMTP Email Body"], ["smtp_settings", "---\n:address: localhost\n:port: 25\n:domain: localhost.localdomain\n:user_name: some.user\n:password: some.password\n:authentication: :plain\n:enable_starttls_auto: true\n"], ["to", "custom_smtp_email@example.com"], ["updated_at", "2014-05-18 15:38:02.006418"]]
+  [1m[36m (0.1ms)[0m  [1mRELEASE SAVEPOINT active_record_1[0m
+
+Sent mail to custom_smtp_email@example.com (10.8ms)
+Date: Sun, 18 May 2014 17:38:01 +0200
+From: from@example.com
+To: custom_smtp_email@example.com
+Message-ID: <5378d3d9f3f03_124df61e90141f8@zeus.mail>
+Subject: Custom SMTP Email Subject
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=UTF-8
+Content-Transfer-Encoding: 7bit
+ar-mailer-settings: ---=0Asmtp_settings:=0A  :address: localhost=0A  :port:
+ 25=0A  :domain: localhost.localdomain=0A  :user_name: some.user=0A  :password:
+ some.password=0A  :authentication: :plain=0A  :enable_starttls_auto: true=0A
+
+Custom SMTP Email Body
+  [1m[35mEmail Load (0.2ms)[0m  SELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1
+  [1m[36m (0.1ms)[0m  [1mrollback transaction[0m
+  [1m[35m (0.1ms)[0m  begin transaction
+----------------------------------------------------------------------------------------------------
+TestMailerTest: test_: ActionMailer::Base.deliver should set custom attributes in the email record. 
+----------------------------------------------------------------------------------------------------
+  [1m[36mEmail Load (0.2ms)[0m  [1mSELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1[0m
+
+TestMailer#custom_attribute_email: processed outbound mail in 6.3ms
+  [1m[35m (0.1ms)[0m  SAVEPOINT active_record_1
+  [1m[36mSQL (0.2ms)[0m  [1mINSERT INTO "emails" ("a_number", "created_at", "from", "mail", "smtp_settings", "to", "updated_at") VALUES (?, ?, ?, ?, ?, ?, ?)[0m  [["a_number", 42], ["created_at", "2014-05-18 15:38:02.026094"], ["from", "from@example.com"], ["mail", "Date: Sun, 18 May 2014 17:38:02 +0200\r\nFrom: from@example.com\r\nTo: custom_attribute_email@example.com\r\nMessage-ID: <5378d3da522b_124df61e9014250@zeus.mail>\r\nSubject: Custom Attribute Email Subject\r\nMime-Version: 1.0\r\nContent-Type: text/plain;\r\n charset=UTF-8\r\nContent-Transfer-Encoding: 7bit\r\n\r\nCustom Attribute Email Body"], ["smtp_settings", nil], ["to", "custom_attribute_email@example.com"], ["updated_at", "2014-05-18 15:38:02.026094"]]
+  [1m[35m (0.0ms)[0m  RELEASE SAVEPOINT active_record_1
+
+Sent mail to custom_attribute_email@example.com (7.1ms)
+Date: Sun, 18 May 2014 17:38:02 +0200
+From: from@example.com
+To: custom_attribute_email@example.com
+Message-ID: <5378d3da522b_124df61e9014250@zeus.mail>
+Subject: Custom Attribute Email Subject
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=UTF-8
+Content-Transfer-Encoding: 7bit
+ar-mailer-settings: ---=0Acustom_attributes:=0A  a_number: 42=0A
+
+Custom Attribute Email Body
+  [1m[36mEmail Load (0.1ms)[0m  [1mSELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1[0m
+  [1m[35m (0.1ms)[0m  rollback transaction
+  [1m[36m (0.0ms)[0m  [1mbegin transaction[0m
+----------------------------------------------------------------------------------------------------------------
+TestMailerTest: test_: ActionMailer::Base.deliver should set custom delivery times in the created email record. 
+----------------------------------------------------------------------------------------------------------------
+  [1m[35mEmail Load (0.1ms)[0m  SELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1
+
+TestMailer#delayed_email: processed outbound mail in 4.8ms
+  [1m[36m (0.1ms)[0m  [1mSAVEPOINT active_record_1[0m
+  [1m[35mSQL (0.2ms)[0m  INSERT INTO "emails" ("created_at", "delivery_time", "from", "mail", "smtp_settings", "to", "updated_at") VALUES (?, ?, ?, ?, ?, ?, ?)  [["created_at", "2014-05-18 15:38:02.040995"], ["delivery_time", "2014-05-18 17:38:02.030547"], ["from", "from@example.com"], ["mail", "Date: Sun, 18 May 2014 17:38:02 +0200\r\nFrom: from@example.com\r\nTo: delayed_email@example.com\r\nMessage-ID: <5378d3da8cef_124df61e90143c8@zeus.mail>\r\nSubject: Delayed Email Subject\r\nMime-Version: 1.0\r\nContent-Type: text/plain;\r\n charset=UTF-8\r\nContent-Transfer-Encoding: 7bit\r\n\r\nDelayed Email Body"], ["smtp_settings", nil], ["to", "delayed_email@example.com"], ["updated_at", "2014-05-18 15:38:02.040995"]]
+  [1m[36m (0.0ms)[0m  [1mRELEASE SAVEPOINT active_record_1[0m
+
+Sent mail to delayed_email@example.com (6.9ms)
+Date: Sun, 18 May 2014 17:38:02 +0200
+From: from@example.com
+To: delayed_email@example.com
+Message-ID: <5378d3da8cef_124df61e90143c8@zeus.mail>
+Subject: Delayed Email Subject
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=UTF-8
+Content-Transfer-Encoding: 7bit
+ar-mailer-settings: ---=0Adelivery_time: 2014-05-18 19:38:02.030547317
+ +02:00=0A
+
+Delayed Email Body
+  [1m[35mEmail Load (0.1ms)[0m  SELECT  "emails".* FROM "emails"   ORDER BY "emails"."id" ASC LIMIT 1
+  [1m[36m (0.1ms)[0m  [1mrollback transaction[0m

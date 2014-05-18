@@ -89,7 +89,7 @@ module ActionMailer
       email_options[:smtp_settings] = ar_settings.delete('smtp_settings')
       email_options[:mail]          = mail.encoded
       email_options[:from]          = (mail['return-path'] && mail['return-path'].spec) || mail.from.first
-      email_options.reverse_merge!(ar_settings[:custom_attributes] || {})
+      email_options.reverse_merge!(ar_settings['custom_attributes'] || {})
 
       mail.destinations.each do |destination|
         ArMailerRevised.email_class.create!(email_options.merge({:to => destination}))
