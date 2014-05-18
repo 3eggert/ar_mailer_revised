@@ -1,13 +1,11 @@
-ArMailerRevised
-===============
+# ArMailerRevised
 
-ArMailer is a great gem that allows you to store emails in your application's database and batch deliver
+[ArMailer](https://github.com/seattlerb/ar_mailer) is a great gem that allows you to store emails in your application's database and batch deliver
 them later using a background task.
 
-However, it was not compatible with newer versions of Rails and also lacking some of the functionality
-I needed in my applications.
+However, it was not compatible with newer versions of Rails and also lacking some of the functionality I needed in my applications.
 
-Especially, I wanted to set 
+Especially, I wanted to use 
 
 * custom delivery dates in the future for delayed emails
 * custom SMTP settings per email
@@ -17,8 +15,7 @@ ArMailerRevised contains this functionality, currently only for Rails >= 4.
 
 **Important**: ArMailerRevised does only deliver emails using SMTP, not a sendmail executable.
 
-Installation
-------------
+## Installation
 
 Add this line to your application's Gemfile:
 
@@ -31,9 +28,8 @@ And then execute:
 Or install it yourself as:
 
     $ gem install ar_mailer_revised
-
-Generators
-----------
+    
+### Generating Files
 
 ArMailerRevised needs a few things to work correctly:
 
@@ -50,8 +46,7 @@ or just the initializer - depending on how you answer the question.
 You can also customize the email model's name. Model file, Migration and
 initializer will be automatically altered.
 
-Setting the delivery method
----------------------------
+### Setting the delivery method
 
 First of all, you have to set ActionMailer to use the gem's delivery method.
 This can be done per environment or globally for the application using either
@@ -62,8 +57,7 @@ or - not inside a configuration file
 
     ActionMailer::Base.delivery_method = :activerecord
     
-SMTP-Settings
--------------
+### SMTP-Settings
 
 ArMailerRevised accepts SMTP settings in the form ActionMailer::Base does.
 Application wide settings have to be stored in ActionMailer::Base.smtp_settings.
@@ -80,8 +74,7 @@ setting will override a less important setting.
 
 `:openssl_verify_mode` is currently not supported, but will possibly be added later on.
 
-Mailer Basics
--------------
+## Creating Emails
 
 ArMailerRevised uses the normal ActionMailer::Base templates, so you can write
 deliver-methods like you would for direct email sending.
@@ -95,8 +88,7 @@ On delivering, the email will be stored in the database and not being sent diret
       end
     end
     
-Setting a custom delivery time
-------------------------------
+### Setting a custom delivery time
 
 ArMailerRevised adds a new method to ActionMailer templates to customize
 the resulting email record. One of them is +ar_mailer_delivery_time+.
@@ -112,8 +104,7 @@ in other words: If you set this time, the email won't be sent prior to it.
 custom attributes (like the delivery time) in its header. This happens because ActionMailer will
 log the email before actually delivering it. The generated email will **not** contain these headers any more.
 
-Setting custom SMTP settings
-----------------------------
+### Setting custom SMTP settings
 
 It is possible to set own SMTP settings for each email in the system which will then be used for delivery.
 These settings may contain everything the global settings do (see above).
@@ -135,8 +126,7 @@ These settings may contain everything the global settings do (see above).
 **Important**: As the mailer has to use the password to connect to the SMTP server, it is stored in the database in plain text!
 If this means a security issue to you, please use only the global settings which are loaded from the environment and not stored in the database.
 
-Other custom attributes
------------------------
+### Other custom attributes
 
 It is possible to set custom attributes in the email record before it is saved, e.g.
 to keep better track of emails (by adding an identifier of the reason the email was generated at all).
@@ -152,8 +142,7 @@ In the email delivering method, these attributes may then be filled with the act
       mail(to: 'custom_attribute_email@example.com', subject: 'Custom Attribute Email Subject', :body => 'Custom Attribute Email Body')
     end
 
-Contributing
-------------
+# Contributing
 
 1. Fork it
 2. Create your feature branch (`git checkout -b my-new-feature`)
