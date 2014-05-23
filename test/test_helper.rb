@@ -16,3 +16,7 @@ Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each { |f| require f }
 if ActiveSupport::TestCase.method_defined?(:fixture_path=)
   ActiveSupport::TestCase.fixture_path = File.expand_path("../fixtures", __FILE__)
 end
+
+# For generators
+require "rails/generators/test_case"
+require "generators/ar_mailer_revised/install_generator"

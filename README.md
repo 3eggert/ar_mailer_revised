@@ -39,14 +39,11 @@ ArMailerRevised needs a few things to work correctly:
 2. An email model to create and access the email records
 3. An initializer to set the gem configuration
 
-Both can be created using a generator:
+All of them can be created using a generator:
 
-    $ rails g ar_mailer_revised:install
+    $ rails g ar_mailer_revised:install MODEL_NAME
 
-The generator will either install everything (initializer + migration + model)
-or just the initializer - depending on how you answer the question.
-You can also customize the email model's name. Model file, Migration and
-initializer will be automatically altered.
+If you don't specify a model name, the default name `Email` is used 
 
 ### Setting the delivery method
 
