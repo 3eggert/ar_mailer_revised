@@ -1,5 +1,7 @@
 # ArMailerRevised
 
+[![Code Climate](https://codeclimate.com/github/Stex/ar_mailer_revised.png)](https://codeclimate.com/github/Stex/ar_mailer_revised)
+
 [ArMailer](https://github.com/seattlerb/ar_mailer) is a great gem that allows you to store emails in your application's database and batch deliver
 them later using a background task.
 
@@ -141,7 +143,7 @@ In the email delivering method, these attributes may then be filled with the act
       ar_mailer_attribute :a_number, 42
       mail(to: 'custom_attribute_email@example.com', subject: 'Custom Attribute Email Subject', :body => 'Custom Attribute Email Body')
     end
-
+    
 # Contributing
 
 1. Fork it
