@@ -3,7 +3,7 @@
 [![Code Climate](https://codeclimate.com/github/Stex/ar_mailer_revised.png)](https://codeclimate.com/github/Stex/ar_mailer_revised)
 ![Travis CI](https://travis-ci.org/Stex/ar_mailer_revised.svg?branch=rails_4)
 
-[ArMailer](https://github.com/seattlerb/ar_mailer) is a great gem that allows you to store emails in your application's database and batch deliver
+[ArMailer](https://github.com/seattlerb/ar_mailer) was a great gem which allows you to store emails in your application's database and batch deliver
 them later using a background task.
 
 However, it was not compatible with newer versions of Rails and also lacking some of the functionality I needed in my applications.
@@ -36,7 +36,7 @@ Or install it yourself as:
 
 ArMailerRevised needs a few things to work correctly:
 
-1. A table in the database to store the the email queue
+1. A table in the database to store the email queue
 2. An email model to create and access the email records
 3. An initializer to set the gem configuration
 
@@ -44,7 +44,13 @@ All of them can be created using a generator:
 
     $ rails g ar_mailer_revised:install MODEL_NAME
 
-If you don't specify a model name, the default name `Email` is used 
+If you don't specify a model name, the default name `Email` is used.
+ 
+Please migrate your database after the migration was created.
+If you need custom attributes (see below) in your email table, please 
+add them to the migration before migrating.
+
+    $ rake db:migrate
 
 ### Setting the delivery method
 
@@ -73,6 +79,8 @@ The only difference here are additional TLS options as follows:
 setting will override a less important setting.
 
 `:openssl_verify_mode` is currently not supported, but will possibly be added later on.
+
+Below will be a growing list of demo SMTP settings for popular providers.
 
 ## Creating Emails
 
@@ -141,6 +149,30 @@ In the email delivering method, these attributes may then be filled with the act
       ar_mailer_attribute :a_number, 42
       mail(to: 'custom_attribute_email@example.com', subject: 'Custom Attribute Email Subject', :body => 'Custom Attribute Email Body')
     end
+    
+### Sending Emails
+
+ArMailerRevised comes with an executable called `ar_sendmail` which can
+be accessed from the application's root directory.
+
+It accepts the argument `-h` (or `--help`), showing all available options.
+If you call it without options, it will run a single batch sending in the foreground and exist afterwards.
+
+There will be daemon functionality in the future (mostly to avoid loading the application envirionment
+every single time emails are being sent), for now I suggest using a gem like [whenever](https://github.com/javan/whenever)
+to run the executable every X minutes.
+    
+### SMTP settings for common providers (to be extended)
+
+GoogleMail:
+
+    :address        => 'smtp.googlemail.com',
+    :port           => 465,
+    :domain         => 'googlemail.com',
+    :user_name      => 'USERNAME@googlemail.com',
+    :password       => 'SOME_PASSWORD',
+    :authentication => :plain,
+    :tls            => true
     
 # Contributing
 

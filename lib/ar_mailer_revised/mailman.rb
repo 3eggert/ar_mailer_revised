@@ -57,10 +57,11 @@ module ArMailerRevised
 
       group_emails_by_settings(emails).each do |settings_hash, grouped_emails|
         setting = OpenStruct.new(settings_hash)
-        logger.info "Using setting #{setting.domain}/#{setting.user_name}"
+        logger.info "Using setting #{setting.address}:#{setting.port}/#{setting.user_name}"
 
-        smtp = Net::SMTP.new(setting.host, setting.port)
-
+        smtp = Net::SMTP.new(setting.address, setting.port)
+        smtp.open_timeout = 10
+        smtp.read_timeout = 10
         setup_tls(smtp, setting)
 
         #Connect to the server and handle possible errors
@@ -71,27 +72,22 @@ module ArMailerRevised
             end
           end
         rescue Net::SMTPAuthenticationError => e
-          logger.warn 'SMTP authentication failed. Setting default SMTP settings for all affected emails. They will be sent next batch'
-          logger.warn 'Complete Error: ' + e.to_s
-
-          grouped_emails.each do |email|
-            logger.info "Removed custom email settings for Email ##{email.id}"
-            email.smtp_settings = nil
-            email.save(false)
-          end
+          handle_smtp_authentication_error(setting, e, grouped_emails)
         rescue Net::SMTPServerBusy => e
           logger.warn 'Server is busy, trying again next batch.'
           logger.warn 'Complete Error: ' + e.to_s
-        rescue Net::SMTPSyntaxError, Net::SMTPFatalError, Net::SMTPUnknownError, Net::OpenTimeout, Net::ReadTimeout => e
+        rescue Net::OpenTimeout, Net::ReadTimeout => e
+          handle_smtp_timeout(setting, e, grouped_emails)
+        rescue Net::SMTPSyntaxError, Net::SMTPFatalError, Net::SMTPUnknownError => e
           #TODO: Should we remove the custom SMTP settings here as well?
           logger.warn 'Other SMTP error, trying again next batch.'
           logger.warn 'Complete Error: ' + e.to_s
         rescue Exception => e
           logger.warn 'Other Error, trying again next batch.'
           logger.warn 'Complete Error: ' + e.to_s
+          puts e.backtrace
         end
       end
-
     end
 
     #
@@ -110,13 +106,16 @@ module ArMailerRevised
     #
     def group_emails_by_settings(emails)
       emails.inject({}) do |hash, email|
+        setting = ActionMailer::Base.smtp_settings
+
         if email.smtp_settings
-          hash[smtp_settings] ||= []
-          hash[smtp_settings] << email
-        else
-          hash[ActionMailer::Base.smtp_settings] ||= []
-          hash[ActionMailer::Base.smtp_settings] << email
+          setting = email.smtp_settings.clone
+          setting[:custom_setting] = true
         end
+
+        hash[setting] ||= []
+        hash[setting] << email
+
         hash
       end
     end
@@ -135,10 +134,13 @@ module ArMailerRevised
     #
     def setup_tls(smtp, setting)
       if setting.enable_starttls_auto
+        logger.debug 'Using STARTTLS, if the server accepts it'
         smtp.enable_starttls_auto
       elsif setting.enable_starttls
+        logger.debug 'Forcing STARTTLS'
         smtp.enable_starttls
       elsif setting.tls
+        logger.debug 'Forcing TLS'
         smtp.enable_tls
       end
     end
@@ -168,16 +170,93 @@ module ArMailerRevised
     #
     def send_email(smtp, email)
       logger.info "Sending Email ##{email.id}"
-
       smtp.send_message(email.mail, email.from, email.to)
       email.destroy
     rescue Net::SMTPServerBusy => e
       logger.warn 'Server is currently busy, trying again next batch'
       logger.warn 'Complete Error: ' + e.to_s
     rescue Net::SMTPSyntaxError, Net::SMTPFatalError, Net::SMTPUnknownError, Net::ReadTimeout => e
-      logger.warn 'Other Exception. Adjusting last_send_attempt and trying again next batch'
-      logger.warn 'Complete Error: ' + e.to_s
+      logger.warn 'Other exception, trying again next batch: ' + e.to_s
+      adjust_last_send_attempt!(email)
+    end
+
+    #-----------------------------------------------------------------
+    #                    SMTP connection error handling
+    # These errors happen directly when connecting to the SMTP server
+    #-----------------------------------------------------------------
+
+    #
+    # Handles Net::OpenTimeout and Net::ReadTimeout occurring
+    # while connecting to an SMTP server.
+    #
+    # If the setting was a custom SMTP setting, it will be removed from
+    # all given emails - but only if it failed before.
+    # With this, each email setting gets 2 tries.
+    #
+    # @param [OpenStruct] setting
+    #   The used SMTP settings
+    #
+    # @param [Exception] exception
+    #   The exception thrown
+    #
+    # @param [Array<Email>] emails
+    #   All emails to be delivered using this system (in the current batch)
+    #
+    def handle_smtp_timeout(setting, exception, emails)
+      logger.warn "SMTP connection timeout while connecting to '#{setting.address}:#{setting.port}'"
+      logger.warn 'Complete Error: ' + exception.to_s
+
+      if setting.custom_setting
+        emails.each do |email|
+          if email.previously_attempted?
+            logger.warn 'Setting default SMTP settings for all affected emails, they will be sent next batch.'
+            remove_custom_smtp_settings!(email)
+          else
+            adjust_last_send_attempt!(email)
+          end
+        end
+      end
+    end
+
+    #
+    # Handles authentication errors occuring while connecting to an SMTP server.
+    # @see #handle_smtp_timeout
+    #
+    # The main difference is, that custom SMTP settings will be deleted directly
+    # as it isn't very likely that time will solve the error.
+    #
+    def handle_smtp_authentication_error(setting, exception, emails)
+      logger.warn "SMTP authentication error while connecting to '#{setting.host}:#{setting.port}'"
+      logger.warn 'Complete Error: ' + exception.to_s
+
+      if setting.custom_setting
+        logger.warn 'Setting default SMTP settings for all affected emails, they will be sent next batch.'
+
+        if setting.custom_setting
+          emails.each { |email| remove_custom_smtp_settings!(email) }
+        end
+      else
+        logger.error "Your application's base setting ('#{setting.host}:#{setting.port}') produced an authentication error!"
+      end
+    end
+
+    #
+    # Adjusts the last send attempt timestamp in the given
+    # email to the current time.
+    #
+    def adjust_last_send_attempt!(email)
+      logger.info "Setting last send attempt for email ##{email.id} (was: #{email.last_send_attempt})"
       email.last_send_attempt = Time.now.to_i
+      email.save(:validate => false)
+    end
+
+    #
+    # Removes the custom smtp settings from a given email record
+    # and saves it without validations
+    #
+    def remove_custom_smtp_settings!(email)
+      logger.info "Removing custom SMTP settings (#{email.smtp_settings[:address]}:#{email.smtp_settings[:port]}) for email ##{email.id}"
+      email.smtp_settings = nil
       email.save(:validate => false)
     end
   end

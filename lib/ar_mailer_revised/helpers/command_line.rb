@@ -132,7 +132,7 @@ module ArMailerRevised
 
           opts.on("-e", "--environment RAILS_ENV",
                   "Set the RAILS_ENV constant",
-                  "Default: #{options[:RailsEnv]}") do |env|
+                  "Default: #{options[:rails_env]}") do |env|
             options[:rails_env] = env
           end
 
