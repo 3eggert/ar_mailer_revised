@@ -1,9 +1,9 @@
 # ArMailerRevised
 
 [![Code Climate](https://codeclimate.com/github/Stex/ar_mailer_revised.png)](https://codeclimate.com/github/Stex/ar_mailer_revised)
-![Travis CI](https://travis-ci.org/Stex/ar_mailer_revised.svg?branch=rails_4)
+[![Build Status](https://travis-ci.org/Stex/ar_mailer_revised.svg?branch=rails_4)](https://travis-ci.org/Stex/ar_mailer_revised)
 
-[ArMailer](https://github.com/seattlerb/ar_mailer) was a great gem which allows you to store emails in your application's database and batch deliver
+[ArMailer](https://github.com/seattlerb/ar_mailer) is a great gem which allows you to store emails in your application's database and batch deliver
 them later using a background task.
 
 However, it was not compatible with newer versions of Rails and also lacking some of the functionality I needed in my applications.
