@@ -20,15 +20,14 @@ Gem::Specification.new do |spec|
   spec.require_paths = ['lib']
 
   spec.add_development_dependency 'bundler', '~> 1.3'
-  spec.add_development_dependency 'rake'
-  spec.add_development_dependency 'yard'
-  spec.add_development_dependency 'redcarpet', '~> 2.3.0'
-  spec.add_development_dependency 'rails', '~> 4'
+  spec.add_development_dependency 'rake', '~> 10.3'
+  spec.add_development_dependency 'yard', '~> 0.8'
+  spec.add_development_dependency 'redcarpet', '~> 2.3'
   spec.add_development_dependency 'sqlite3'
   spec.add_development_dependency 'minitest'
   spec.add_development_dependency 'shoulda'
 
-  spec.add_dependency 'actionmailer', '~> 4'
+  spec.add_dependency 'rails', '~> 4'
   spec.add_dependency 'log4r'
   spec.add_dependency 'hirb'
 
