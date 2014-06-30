@@ -57,11 +57,15 @@ add them to the migration before migrating.
 First of all, you have to set ActionMailer to use the gem's delivery method.
 This can be done per environment or globally for the application using either
 
-    config.action_mailer.delivery_method = :activerecord
+```ruby
+config.action_mailer.delivery_method = :activerecord
+```
 
 or - not inside a configuration file
 
-    ActionMailer::Base.delivery_method = :activerecord
+```ruby
+ActionMailer::Base.delivery_method = :activerecord
+```
     
 ### SMTP-Settings
 
@@ -88,13 +92,15 @@ ArMailerRevised uses the normal ActionMailer::Base templates, so you can write
 deliver-methods like you would for direct email sending.
 On delivering, the email will be stored in the database and not being sent diretly.
 
-    class TestMailer < ActionMailer::Base
-      default from: 'from@example.com'
-    
-      def basic_email
-        mail(to: 'basic_email@example.com', subject: 'Basic Email Subject', body: 'Basic Email Body')
-      end
-    end
+```ruby
+class TestMailer < ActionMailer::Base
+  default from: 'from@example.com'
+
+  def basic_email
+    mail(to: 'basic_email@example.com', subject: 'Basic Email Subject', body: 'Basic Email Body')
+  end
+end
+```
     
 ### Setting a custom delivery time
 
@@ -103,10 +109,12 @@ the resulting email record. One of them is +ar_mailer_delivery_time+.
 This method sets a time which determines the earliest sending time for this email, 
 in other words: If you set this time, the email won't be sent prior to it.
 
-    def delayed_email
-      ar_mailer_delivery_time Time.now + 2.hours
-      mail(to: 'delayed_email@example.com', subject: 'Delayed Email Subject', :body => 'Delayed Email Body')
-    end
+```ruby
+def delayed_email
+  ar_mailer_delivery_time Time.now + 2.hours
+  mail(to: 'delayed_email@example.com', subject: 'Delayed Email Subject', :body => 'Delayed Email Body')
+end
+```
     
 **Important**: It may happen that the Rails logging output of the generated mail may still contain
 custom attributes (like the delivery time) in its header. This happens because ActionMailer will
@@ -117,19 +125,21 @@ log the email before actually delivering it. The generated email will **not** co
 It is possible to set own SMTP settings for each email in the system which will then be used for delivery.
 These settings may contain everything the global settings do (see above).
 
-    def custom_smtp_email
-      ar_mailer_smtp_settings({
-        :address   => 'localhost',
-        :port      => 25,
-        :domain    => 'localhost.localdomain',
-        :user_name => 'some.user',
-        :password  => 'some.password',
-        :authentication => :plain,
-        :enable_starttls_auto => true
-      })
-        
-      mail(to: 'custom_smtp_email@example.com', subject: 'Custom SMTP Email Subject', :body => 'Custom SMTP Email Body')
-    end
+```ruby
+def custom_smtp_email
+  ar_mailer_smtp_settings({
+    :address   => 'localhost',
+    :port      => 25,
+    :domain    => 'localhost.localdomain',
+    :user_name => 'some.user',
+    :password  => 'some.password',
+    :authentication => :plain,
+    :enable_starttls_auto => true
+  })
+    
+  mail(to: 'custom_smtp_email@example.com', subject: 'Custom SMTP Email Subject', :body => 'Custom SMTP Email Body')
+end
+```
 
 **Important**: As the mailer has to use the password to connect to the SMTP server, it is stored in the database in plain text!
 If this means a security issue to you, please use only the global settings which are loaded from the environment and not stored in the database.
@@ -145,10 +155,12 @@ You can add custom attributes to the email table simply by altering the generate
     
 In the email delivering method, these attributes may then be filled with the actual data using the `ar_mailer_attribute` helper method:
 
-    def custom_attribute_email
-      ar_mailer_attribute :a_number, 42
-      mail(to: 'custom_attribute_email@example.com', subject: 'Custom Attribute Email Subject', :body => 'Custom Attribute Email Body')
-    end
+```ruby
+def custom_attribute_email
+  ar_mailer_attribute :a_number, 42
+  mail(to: 'custom_attribute_email@example.com', subject: 'Custom Attribute Email Subject', :body => 'Custom Attribute Email Body')
+end
+```
     
 ### Sending Emails
 
