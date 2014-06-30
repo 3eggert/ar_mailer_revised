@@ -240,6 +240,10 @@ module ArMailerRevised
       end
     end
 
+    #----------------------------------------------------------------
+    #                    Email Record Alteration
+    #----------------------------------------------------------------
+
     #
     # Adjusts the last send attempt timestamp in the given
     # email to the current time.
