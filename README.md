@@ -171,9 +171,17 @@ be accessed from the application's root directory.
 It accepts the argument `-h` (or `--help`), showing all available options.
 If you call it without options, it will run a single batch sending in the foreground and exist afterwards.
 
-There will be daemon functionality in the future (mostly to avoid loading the application envirionment
+There will be daemon functionality in the future (mostly to avoid loading the application environment
 every single time emails are being sent), for now I suggest using a gem like [whenever](https://github.com/javan/whenever)
 to run the executable every X minutes.
+
+An entry in whenever's `schedule.rb` might look like this:
+
+```ruby
+every 5.minutes do
+ command "cd #{path} && bundle exec ar_sendmail -c #{path} -e production -b 25 --log-file './log/ar_mailer.log' --log-level info"
+end
+```
     
 ### SMTP settings for common providers (to be extended)
 
