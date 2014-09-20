@@ -23,7 +23,7 @@ module ArMailerRevised
 
       #Applies a +limit+ to the finder if batch_size is set
       scope :with_batch_size, lambda { |batch_size|
-        batch_size ? {:limit => batch_size} : {}
+        limit(batch_size) if batch_size
       }
     end
 
