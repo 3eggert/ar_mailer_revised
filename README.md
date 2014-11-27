@@ -1,9 +1,5 @@
 # ArMailerRevised
 
-[![Gem Version](https://badge.fury.io/rb/ar_mailer_revised.svg)](http://badge.fury.io/rb/ar_mailer_revised)
-[![Code Climate](https://codeclimate.com/github/Stex/ar_mailer_revised.png)](https://codeclimate.com/github/Stex/ar_mailer_revised)
-[![Build Status](https://travis-ci.org/Stex/ar_mailer_revised.svg?branch=rails_4)](https://travis-ci.org/Stex/ar_mailer_revised)
-
 [ArMailer](https://github.com/seattlerb/ar_mailer) is a great gem which allows you to store emails in your application's database and batch deliver
 them later using a background task.
 
@@ -15,9 +11,11 @@ Especially, I wanted to use
 * custom SMTP settings per email
 * custom attributes directly in the email record to keep track of them
 
-ArMailerRevised contains this functionality, currently only for Rails >= 4.
+**Note:** This is the Rails 2.3 version of ARMailer Revised.
+It does (and always will) **only support generating emails, not actually sending them**.
 
-**Important**: ArMailerRevised does only deliver emails using SMTP, not a sendmail executable.
+To actually send them, a Rails 4 application will be needed, this version was only made
+to let older existing applications use the email queue.
 
 ## Installation
 
@@ -43,13 +41,11 @@ ArMailerRevised needs a few things to work correctly:
 
 All of them can be created using a generator:
 
-    $ rails g ar_mailer_revised:install MODEL_NAME
+    $ ruby script/generate ar_mailer_revised MODEL_NAME
 
-If you don't specify a model name, the default name `Email` is used.
- 
-Please migrate your database after the migration was created.
-If you need custom attributes (see below) in your email table, please 
-add them to the migration before migrating.
+If you just want to add an old application to an existing Rails 4 email queue,
+simply delete the migration as you won't need it.
+Otherwise, migrate your application before continuing.
 
     $ rake db:migrate
 
@@ -70,7 +66,7 @@ ActionMailer::Base.delivery_method = :activerecord
     
 ### SMTP-Settings
 
-ArMailerRevised accepts SMTP settings in the form ActionMailer::Base does.
+ArMailerRevised accepts SMTP settings in the form ActionMailer::Base (v4) does.
 Application wide settings have to be stored in ActionMailer::Base.smtp_settings.
 Please have a look at [ActionMailer::Base](http://api.rubyonrails.org/classes/ActionMailer/Base.html)
 
@@ -90,15 +86,16 @@ Below will be a growing list of demo SMTP settings for popular providers.
 ## Creating Emails
 
 ArMailerRevised uses the normal ActionMailer::Base templates, so you can write
-deliver-methods like you would for direct email sending.
-On delivering, the email will be stored in the database and not being sent diretly.
+delivery-methods like you would for direct email sending.
+On delivering, the email will be stored in the database and not being sent directly.
 
 ```ruby
 class TestMailer < ActionMailer::Base
-  default from: 'from@example.com'
-
-  def basic_email
-    mail(to: 'basic_email@example.com', subject: 'Basic Email Subject', body: 'Basic Email Body')
+  def basic_email(recipients)
+     from    'test@example.com'
+     to      recipients
+     subject 'Hello, World'
+     body    'How are you?'
   end
 end
 ```
@@ -113,7 +110,11 @@ in other words: If you set this time, the email won't be sent prior to it.
 ```ruby
 def delayed_email
   ar_mailer_delivery_time Time.now + 2.hours
-  mail(to: 'delayed_email@example.com', subject: 'Delayed Email Subject', :body => 'Delayed Email Body')
+
+  from    'test@example.com'
+  to      recipients
+  subject 'Delayed Email'
+  body    'Yes, I am indeed delayed.'
 end
 ```
     
@@ -138,7 +139,10 @@ def custom_smtp_email
     :enable_starttls_auto => true
   })
     
-  mail(to: 'custom_smtp_email@example.com', subject: 'Custom SMTP Email Subject', :body => 'Custom SMTP Email Body')
+  from    'test@example.com'
+  to      recipients
+  subject 'Custom Settings Email'
+  body    'I use custom settings (but will go back to the default ones if these are incorrect)'
 end
 ```
 
@@ -159,29 +163,20 @@ In the email delivering method, these attributes may then be filled with the act
 ```ruby
 def custom_attribute_email
   ar_mailer_attribute :a_number, 42
-  mail(to: 'custom_attribute_email@example.com', subject: 'Custom Attribute Email Subject', :body => 'Custom Attribute Email Body')
+
+  from    'test@example.com'
+  to      recipients
+  subject 'Custom Attribute Email'
+  body    'I have a custom attribute.'
 end
 ```
     
 ### Sending Emails
 
-ArMailerRevised comes with an executable called `ar_sendmail` which can
-be accessed from the application's root directory.
+As mentioned above, this version of ARMailer Revised does not allow sending emails.
 
-It accepts the argument `-h` (or `--help`), showing all available options.
-If you call it without options, it will run a single batch sending in the foreground and exist afterwards.
-
-There will be daemon functionality in the future (mostly to avoid loading the application environment
-every single time emails are being sent), for now I suggest using a gem like [whenever](https://github.com/javan/whenever)
-to run the executable every X minutes.
-
-An entry in whenever's `schedule.rb` might look like this:
-
-```ruby
-every 5.minutes do
- command "cd #{path} && bundle exec ar_sendmail -c #{path} -e production -b 25 --log-file './log/ar_mailer.log' --log-level info"
-end
-```
+Please use the Rails 4 version instead, e.g. with an own little application
+which uses the same database and only provides the email sending functionality.
     
 ### SMTP settings for common providers (to be extended)
 

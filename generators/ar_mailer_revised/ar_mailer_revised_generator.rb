@@ -6,6 +6,10 @@ class ArMailerRevisedGenerator < Rails::Generator::NamedBase
       #Create the model
       m.template 'model.rb', "app/models/#{model_name.downcase.underscore}.rb", :assigns => {:model_name => model_name}
 
+      #Create the migration
+      m.migration_template 'migration.rb', 'db/migrate', :migration_file_name => "create_#{model_name.downcase.underscore.pluralize}",
+                                                         :assigns => {:model_name => model_name}
+
       #Create the initializer
       m.template 'initializer.rb', 'config/initializers/ar_mailer_revised.rb', :assigns => {:model_name => model_name}
     end
