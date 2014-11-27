@@ -3,8 +3,6 @@ require 'action_mailer/ar_mailer'
 require 'ar_mailer_revised/email_scaffold'
 
 #Register the new delivery method
-ActionMailer::Base.add_delivery_method :activerecord, ActionMailer::DeliveryMethodActiveRecord
-
 module ArMailerRevised
   def self.configuration(&proc)
     @@config ||= OpenStruct.new({
@@ -31,6 +29,7 @@ module ArMailerRevised
   #   The email class' name
   #
   def self.email_class_name
-    @@config.email_class.classify
+    self.configuration.email_class.classify
   end
+
 end

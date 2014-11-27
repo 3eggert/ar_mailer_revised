@@ -1,5 +1,10 @@
 #!/usr/bin/env ruby
 
-require 'ar_mailer_revised/mailman'
-ArMailerRevised::Mailman.run
+puts <<-EOS
+
+ar_sendmail is currently only available in the rails 4 version of ar_mailer_revised.
+The rails 2 version was only created to support email creation on older systems
+while still keeping the mail queue on a more up-to-date one.
+
+EOS
 

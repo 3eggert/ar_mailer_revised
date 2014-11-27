@@ -23,13 +23,8 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rake', '~> 10.3'
   spec.add_development_dependency 'yard', '~> 0.8'
   spec.add_development_dependency 'redcarpet', '~> 2.3'
-  spec.add_development_dependency 'sqlite3'
-  spec.add_development_dependency 'minitest'
-  spec.add_development_dependency 'shoulda'
 
-  spec.add_dependency 'rails', '~> 4'
-  spec.add_dependency 'log4r'
-  spec.add_dependency 'hirb'
+  spec.add_dependency 'rails', '~> 2.3'
 
-  spec.required_ruby_version = '~> 2'
+  spec.required_ruby_version = '>= 1.8.7'
 end

@@ -45,18 +45,29 @@ class ActionMailer::Base
   # Sets or simply returns an ar_mailer_setting
   #
   def ar_mailer_setting(key, value = nil)
-    if headers[:ar_mailer_settings]
-      settings = YAML.load(headers[:ar_mailer_settings]).stringify_keys
-    else
-      settings = {}
-    end
+    @ar_mailer_settings ||= {}
 
     if value
-      settings[key.to_s] = value
-      headers[:ar_mailer_settings] = YAML.dump(settings)
+      @ar_mailer_settings[key.to_s] = value
     else
-      settings[key.to_s]
+      @ar_mailer_settings[key.to_s]
     end
+  end
+
+  def perform_delivery_activerecord(mail)
+
+    email_options = {}
+    email_options[:delivery_time] = ar_mailer_setting(:delivery_time)
+    email_options[:smtp_settings] = ar_mailer_setting(:smtp_settings)
+    email_options[:mail]          = mail.encoded
+    email_options[:from]          = (mail['return-path'] && mail['return-path'].spec) || mail.from.first
+
+    email_options.reverse_merge!(ar_mailer_setting(:custom_attributes) || {})
+
+    mail.destinations.each do |destination|
+      ArMailerRevised.email_class.create!(email_options.merge({:to => destination}))
+    end
+
   end
 
 end
@@ -64,43 +75,43 @@ end
 #
 # This class contains the actual sending functionality
 #
-module ActionMailer
-  class DeliveryMethodActiveRecord
-    #
-    # The delivery method seems to be called with a settings hash from the mail gem.
-    #
-    def initialize(settings)
-      @settings = settings
-    end
-
-    #
-    # Actually creates the email record in the database
-    #
-    def deliver!(mail)
-      if mail['ar_mailer_settings']
-
-        puts mail['ar_mailer_settings'].value.inspect
-
-        ar_settings = YAML.load(mail['ar_mailer_settings'].value)
-        ar_settings = ar_settings.stringify_keys
-
-        mail['ar_mailer_settings'] = nil
-      else
-        ar_settings = {}
-      end
-
-      email_options = {}
-      email_options[:delivery_time] = ar_settings.delete('delivery_time')
-      email_options[:smtp_settings] = ar_settings.delete('smtp_settings')
-      email_options[:mail]          = mail.encoded
-      email_options[:from]          = (mail['return-path'] && mail['return-path'].spec) || mail.from.first
-      email_options.reverse_merge!(ar_settings['custom_attributes'] || {})
-
-      mail.destinations.each do |destination|
-        ArMailerRevised.email_class.create!(email_options.merge({:to => destination}))
-      end
-    end
-  end
-end
+# module ActionMailer
+#   class DeliveryMethodActiveRecord
+#     #
+#     # The delivery method seems to be called with a settings hash from the mail gem.
+#     #
+#     def initialize(settings)
+#       @settings = settings
+#     end
+#
+#     #
+#     # Actually creates the email record in the database
+#     #
+#     def deliver!(mail)
+#       if mail['ar_mailer_settings']
+#
+#         puts mail['ar_mailer_settings'].value.inspect
+#
+#         ar_settings = YAML.load(mail['ar_mailer_settings'].value)
+#         ar_settings = ar_settings.stringify_keys
+#
+#         mail['ar_mailer_settings'] = nil
+#       else
+#         ar_settings = {}
+#       end
+#
+#       email_options = {}
+#       email_options[:delivery_time] = ar_settings.delete('delivery_time')
+#       email_options[:smtp_settings] = ar_settings.delete('smtp_settings')
+#       email_options[:mail]          = mail.encoded
+#       email_options[:from]          = (mail['return-path'] && mail['return-path'].spec) || mail.from.first
+#       email_options.reverse_merge!(ar_settings['custom_attributes'] || {})
+#
+#       mail.destinations.each do |destination|
+#         ArMailerRevised.email_class.create!(email_options.merge({:to => destination}))
+#       end
+#     end
+#   end
+# end
 
 
