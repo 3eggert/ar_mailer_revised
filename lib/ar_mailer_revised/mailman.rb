@@ -58,6 +58,7 @@ module ArMailerRevised
       group_emails_by_settings(emails).each do |settings_hash, grouped_emails|
         setting = OpenStruct.new(settings_hash)
         logger.info "Using setting #{setting.address}:#{setting.port}/#{setting.user_name}"
+        logger.info setting.inspect
 
         smtp = Net::SMTP.new(setting.address, setting.port)
         smtp.open_timeout = 10
@@ -73,12 +74,14 @@ module ArMailerRevised
           end
         rescue Net::SMTPAuthenticationError => e
           handle_smtp_authentication_error(setting, e, grouped_emails)
+        rescue Net::SMTPSyntaxError => e
+          handle_smtp_syntax_error(setting, e, grouped_emails)
         rescue Net::SMTPServerBusy => e
           logger.warn 'Server is busy, trying again next batch.'
           logger.warn 'Complete Error: ' + e.to_s
         rescue Net::OpenTimeout, Net::ReadTimeout => e
           handle_smtp_timeout(setting, e, grouped_emails)
-        rescue Net::SMTPSyntaxError, Net::SMTPFatalError, Net::SMTPUnknownError => e
+        rescue Net::SMTPFatalError, Net::SMTPUnknownError => e
           #TODO: Should we remove the custom SMTP settings here as well?
           logger.warn 'Other SMTP error, trying again next batch.'
           logger.warn 'Complete Error: ' + e.to_s
@@ -207,9 +210,9 @@ module ArMailerRevised
       logger.warn 'Complete Error: ' + exception.to_s
 
       if setting.custom_setting
+        logger.warn 'Setting default SMTP settings for all affected emails, they will be sent next batch.'
         emails.each do |email|
           if email.previously_attempted?
-            logger.warn 'Setting default SMTP settings for all affected emails, they will be sent next batch.'
             remove_custom_smtp_settings!(email)
           else
             adjust_last_send_attempt!(email)
@@ -231,12 +234,23 @@ module ArMailerRevised
 
       if setting.custom_setting
         logger.warn 'Setting default SMTP settings for all affected emails, they will be sent next batch.'
-
-        if setting.custom_setting
-          emails.each { |email| remove_custom_smtp_settings!(email) }
-        end
+        emails.each { |email| remove_custom_smtp_settings!(email) }
       else
         logger.error "Your application's base setting ('#{setting.host}:#{setting.port}') produced an authentication error!"
+        emails.each { |email| adjust_last_send_attempt!(email) }
+      end
+    end
+
+    def handle_smtp_syntax_error(setting, exception, emails)
+      logger.warn "SMTP syntax error while connecting to '#{setting.host}:#{setting.port}'"
+      logger.warn 'Complete Error: ' + exception.to_s
+
+      if setting.custom_setting
+        logger.warn 'Setting default SMTP settings for all affected emails, they will be sent next batch.'
+        emails.each { |email| remove_custom_smtp_settings!(email) }
+      else
+        emails.each { |email| adjust_last_send_attempt!(email) }
+        logger.error "Your application's base setting ('#{setting.host}:#{setting.port}') produced a syntax error!"
       end
     end
 

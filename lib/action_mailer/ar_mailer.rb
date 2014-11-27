@@ -79,8 +79,6 @@ module ActionMailer
     def deliver!(mail)
       if mail['ar_mailer_settings']
 
-        puts mail['ar_mailer_settings'].value.inspect
-
         ar_settings = YAML.load(mail['ar_mailer_settings'].value)
         ar_settings = ar_settings.stringify_keys
 
