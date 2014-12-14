@@ -26,6 +26,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'sqlite3'
   spec.add_development_dependency 'minitest'
   spec.add_development_dependency 'shoulda'
+  spec.add_development_dependency 'mailcatcher'
 
   spec.add_dependency 'rails', '~> 4'
   spec.add_dependency 'log4r'
