@@ -1,3 +1,5 @@
+**Important** The Rails 2.3 Gem Versions are **0.x**.
+
 # ArMailerRevised
 
 [ArMailer](https://github.com/seattlerb/ar_mailer) is a great gem which allows you to store emails in your application's database and batch deliver
