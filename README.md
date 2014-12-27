@@ -1,6 +1,7 @@
+**Important**: The Rails 4 Gem Versions are **1.x**
+
 # ArMailerRevised
 
-[![Gem Version](https://badge.fury.io/rb/ar_mailer_revised.svg)](http://badge.fury.io/rb/ar_mailer_revised)
 [![Code Climate](https://codeclimate.com/github/Stex/ar_mailer_revised.png)](https://codeclimate.com/github/Stex/ar_mailer_revised)
 [![Build Status](https://travis-ci.org/Stex/ar_mailer_revised.svg?branch=rails_4)](https://travis-ci.org/Stex/ar_mailer_revised)
 
