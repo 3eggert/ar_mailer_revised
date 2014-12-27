@@ -1,7 +1,6 @@
 #
 # Helper methods for the chosen email class
 #
-
 module ArMailerRevised
   module EmailScaffold
 

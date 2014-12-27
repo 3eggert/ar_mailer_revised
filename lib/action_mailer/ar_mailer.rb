@@ -2,7 +2,6 @@
 # Adds sending email through an ActiveRecord table as a delivery method for
 # ActionMailer.
 #
-
 class ActionMailer::Base
   #
   # Sets a custom email class attribute. It can be used
@@ -54,8 +53,12 @@ class ActionMailer::Base
     end
   end
 
+  #
+  # Custom ActionMailer delivery method.
+  # It does not actually send the email, but will create a record
+  # in the database instead to be sent later by the ar_sendmail executable.
+  #
   def perform_delivery_activerecord(mail)
-
     email_options = {}
     email_options[:delivery_time] = ar_mailer_setting(:delivery_time)
     email_options[:smtp_settings] = ar_mailer_setting(:smtp_settings)
@@ -67,51 +70,5 @@ class ActionMailer::Base
     mail.destinations.each do |destination|
       ArMailerRevised.email_class.create!(email_options.merge({:to => destination}))
     end
-
   end
-
 end
-
-#
-# This class contains the actual sending functionality
-#
-# module ActionMailer
-#   class DeliveryMethodActiveRecord
-#     #
-#     # The delivery method seems to be called with a settings hash from the mail gem.
-#     #
-#     def initialize(settings)
-#       @settings = settings
-#     end
-#
-#     #
-#     # Actually creates the email record in the database
-#     #
-#     def deliver!(mail)
-#       if mail['ar_mailer_settings']
-#
-#         puts mail['ar_mailer_settings'].value.inspect
-#
-#         ar_settings = YAML.load(mail['ar_mailer_settings'].value)
-#         ar_settings = ar_settings.stringify_keys
-#
-#         mail['ar_mailer_settings'] = nil
-#       else
-#         ar_settings = {}
-#       end
-#
-#       email_options = {}
-#       email_options[:delivery_time] = ar_settings.delete('delivery_time')
-#       email_options[:smtp_settings] = ar_settings.delete('smtp_settings')
-#       email_options[:mail]          = mail.encoded
-#       email_options[:from]          = (mail['return-path'] && mail['return-path'].spec) || mail.from.first
-#       email_options.reverse_merge!(ar_settings['custom_attributes'] || {})
-#
-#       mail.destinations.each do |destination|
-#         ArMailerRevised.email_class.create!(email_options.merge({:to => destination}))
-#       end
-#     end
-#   end
-# end
-
-
