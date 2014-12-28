@@ -84,7 +84,7 @@ The only difference here are additional TLS options as follows:
 **Important**: These additional settings are in descending order, meaning that a higher importance
 setting will override a less important setting.
 
-`:openssl_verify_mode` is currently not supported, but will possibly be added later on.
+`:openssl_verify_mode` is now supported and will be used if any of the above TLS options is enabled.
 
 Below will be a growing list of demo SMTP settings for popular providers.
 
