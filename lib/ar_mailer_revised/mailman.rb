@@ -24,9 +24,7 @@ module ArMailerRevised
     end
 
     def run
-     logger.debug 'ArMailerRevised initialized with the following options:'
-     logger.debug Hirb::Helpers::AutoTable.render @options
-
+     logger.debug "ArMailerRevised initialized with the following options:\n" + Hirb::Helpers::AutoTable.render(@options)
      deliver_emails
     end
 
@@ -58,7 +56,6 @@ module ArMailerRevised
       group_emails_by_settings(emails).each do |settings_hash, grouped_emails|
         setting = OpenStruct.new(settings_hash)
         logger.info "Using setting #{setting.address}:#{setting.port}/#{setting.user_name}"
-        logger.info setting.inspect
 
         smtp = Net::SMTP.new(setting.address, setting.port)
         smtp.open_timeout = 10
@@ -85,10 +82,10 @@ module ArMailerRevised
           #TODO: Should we remove the custom SMTP settings here as well?
           logger.warn 'Other SMTP error, trying again next batch.'
           logger.warn 'Complete Error: ' + e.to_s
+        rescue OpenSSL::SSL::SSLError => e
+          handle_ssl_error(setting, e, grouped_emails)
         rescue Exception => e
-          logger.warn 'Other Error, trying again next batch.'
-          logger.warn 'Complete Error: ' + e.to_s
-          puts e.backtrace
+          handle_other_exception(setting, e, grouped_emails)
         end
       end
     end
@@ -138,14 +135,37 @@ module ArMailerRevised
     def setup_tls(smtp, setting)
       if setting.enable_starttls_auto
         logger.debug 'Using STARTTLS, if the server accepts it'
-        smtp.enable_starttls_auto
+        smtp.enable_starttls_auto(build_ssl_context(setting))
       elsif setting.enable_starttls
         logger.debug 'Forcing STARTTLS'
-        smtp.enable_starttls
+        smtp.enable_starttls(build_ssl_context(setting))
       elsif setting.tls
         logger.debug 'Forcing TLS'
-        smtp.enable_tls
+        smtp.enable_tls(build_ssl_context(setting))
+      else
+        logger.debug 'Disabling TLS'
+        smtp.disable_tls
       end
+    end
+
+    #
+    # @return [Boolean] +true+ if TLS is used in any kind (STARTLS auto, STARTLS or TLS)
+    #
+    def use_tls?(setting)
+      setting.enable_starttls_auto || setting.enable_starttls || setting.enable_tls
+    end
+
+    #
+    # Builds an SSL context to be used if TLS is enabled for the given setting
+    # At the moment it only sets the chosen verify_mode, but it might be extended later.
+    #
+    def build_ssl_context(setting)
+      c = OpenSSL::SSL::SSLContext.new
+      if use_tls?(setting)
+        logger.debug "Using SSL verify mode: #{setting.openssl_verify_mode}"
+        c.verify_mode = setting.openssl_verify_mode
+      end
+      c
     end
 
     #
@@ -222,6 +242,18 @@ module ArMailerRevised
     end
 
     #
+    # Handles SSL errors (mostly invalid certificates)
+    # @see #handle_smtp_timeout
+    #
+    # Custom SMTP settings will be deleted and the default server will be used.
+    #
+    def handle_ssl_error(setting, exception, emails)
+      logger.warn "SSL error while connecting to '#{setting.address}:#{setting.port}'"
+      logger.warn 'Complete Error: ' + exception.to_s
+      handle_custom_setting_removal(setting, emails)
+    end
+
+    #
     # Handles authentication errors occuring while connecting to an SMTP server.
     # @see #handle_smtp_timeout
     #
@@ -229,34 +261,49 @@ module ArMailerRevised
     # as it isn't very likely that time will solve the error.
     #
     def handle_smtp_authentication_error(setting, exception, emails)
-      logger.warn "SMTP authentication error while connecting to '#{setting.host}:#{setting.port}'"
+      logger.warn "SMTP authentication error while connecting to '#{setting.address}:#{setting.port}'"
       logger.warn 'Complete Error: ' + exception.to_s
-
-      if setting.custom_setting
-        logger.warn 'Setting default SMTP settings for all affected emails, they will be sent next batch.'
-        emails.each { |email| remove_custom_smtp_settings!(email) }
-      else
-        logger.error "Your application's base setting ('#{setting.host}:#{setting.port}') produced an authentication error!"
-        emails.each { |email| adjust_last_send_attempt!(email) }
-      end
+      handle_custom_setting_removal(setting, emails)
     end
 
+    #
+    # Handles SMTP syntax errors.
+    # @see #handle_smtp_timeout
+    #
     def handle_smtp_syntax_error(setting, exception, emails)
       logger.warn "SMTP syntax error while connecting to '#{setting.host}:#{setting.port}'"
       logger.warn 'Complete Error: ' + exception.to_s
+      handle_custom_setting_removal(setting, emails)
+    end
 
-      if setting.custom_setting
-        logger.warn 'Setting default SMTP settings for all affected emails, they will be sent next batch.'
-        emails.each { |email| remove_custom_smtp_settings!(email) }
-      else
-        emails.each { |email| adjust_last_send_attempt!(email) }
-        logger.error "Your application's base setting ('#{setting.host}:#{setting.port}') produced a syntax error!"
-      end
+    #
+    # Handles other errors occuring while sending the email
+    # Custom settings are removed here as well as the gem itself
+    # most likely has to be altered to send these emails out using
+    # the custom settings - which might take a while.
+    #
+    def handle_other_exception(setting, exception, emails)
+      logger.warn "Other error while connecting to '#{setting.host}:#{setting.port}'"
+      logger.warn "Complete Error (#{exception.class.to_s}): " + exception.to_s
+      handle_custom_setting_removal(setting, emails)
     end
 
     #----------------------------------------------------------------
     #                    Email Record Alteration
     #----------------------------------------------------------------
+
+    #
+    # Removes custom settings for all given emails
+    #
+    def handle_custom_setting_removal(setting, emails)
+      if setting.custom_setting
+        logger.warn 'Setting default SMTP settings for all affected emails, they will be sent next batch.'
+        emails.each { |email| remove_custom_smtp_settings!(email) }
+      else
+        emails.each { |email| adjust_last_send_attempt!(email) }
+        logger.error "Your application's base setting ('#{setting.host}:#{setting.port}') produced an error!"
+      end
+    end
 
     #
     # Adjusts the last send attempt timestamp in the given

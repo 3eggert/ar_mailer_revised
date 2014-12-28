@@ -67,7 +67,7 @@ module ArMailerRevised
         options             = {}
         options[:chdir]     = '.'
         options[:max_age]   = 86400 * 7
-        options[:rails_env] = ENV['RAILS_ENV']
+        options[:rails_env] = ENV['RAILS_ENV'] || 'production'
         options[:log_level] = 'info'
         options[:verbose]   = false
 
