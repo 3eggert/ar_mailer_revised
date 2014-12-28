@@ -9,7 +9,7 @@ Gem::Specification.new do |spec|
   spec.version       = ArMailerRevised::VERSION
   spec.authors       = ['Stefan Exner']
   spec.email         = ['stex@sterex.de']
-  spec.description   = %q{Extension of the great ArMailer gem by Eric Hodel.}
+  spec.description   = %q{Allows Batch-Sending emails in Ruby on Rails applications including delayed emails and custom SMTP settings per email}
   spec.summary       = 'Batch email sending for rails applications'
   spec.homepage      = 'http://www.github.com/stex/ar_mailer_revised'
   spec.license       = 'MIT'
@@ -23,14 +23,14 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rake', '~> 10.3'
   spec.add_development_dependency 'yard', '~> 0.8'
   spec.add_development_dependency 'redcarpet', '~> 2.3'
-  spec.add_development_dependency 'sqlite3'
-  spec.add_development_dependency 'minitest'
-  spec.add_development_dependency 'shoulda'
-  spec.add_development_dependency 'mailcatcher'
+  spec.add_development_dependency 'sqlite3', '~> 1'
+  spec.add_development_dependency 'minitest', '~> 5.3'
+  spec.add_development_dependency 'shoulda', '~> 3.5'
+  spec.add_development_dependency 'mailcatcher', '~> 0.2'
 
   spec.add_dependency 'rails', '~> 4'
-  spec.add_dependency 'log4r'
-  spec.add_dependency 'hirb'
+  spec.add_dependency 'log4r', '~> 1'
+  spec.add_dependency 'hirb', '~> 0'
 
   spec.required_ruby_version = '~> 2'
 end
