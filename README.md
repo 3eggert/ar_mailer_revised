@@ -10,7 +10,7 @@ them later using a background task.
 
 However, it was not compatible with newer versions of Rails and also lacking some of the functionality I needed in my applications.
 
-Especially, I wanted to use 
+In particular, I wanted to use 
 
 * custom delivery dates in the future for delayed emails
 * custom SMTP settings per email
