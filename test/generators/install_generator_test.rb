@@ -1,4 +1,4 @@
-require 'test_helper'
+require_relative '../test_helper'
 
 class InstallGeneratorTest < Rails::Generators::TestCase
   tests ArMailerRevised::Generators::InstallGenerator

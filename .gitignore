@@ -18,3 +18,5 @@ tmp
 .idea/
 test/dummy/log/
 test/dummy/tmp
+.ruby-gemset
+.ruby-version

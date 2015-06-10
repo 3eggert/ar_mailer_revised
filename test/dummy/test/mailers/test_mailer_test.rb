@@ -19,14 +19,14 @@ class TestMailerTest < ActionMailer::TestCase
     end
 
     should 'create a new email record in the database' do
-      assert TestMailer.basic_email.deliver
-      assert email      = Email.first,               'No new record was created'
-      assert email.from = 'from@example.com',        "Wrong sender email address set: #{email.from}"
-      assert email.to   = 'basic_email@example.com', "Wrong recipient email address set: #{email.to}"
+      assert TestMailer.basic_email.deliver_now
+      assert email = Email.first, 'No new record was created'
+      assert email.from = 'from@example.com', "Wrong sender email address set: #{email.from}"
+      assert email.to = 'basic_email@example.com', "Wrong recipient email address set: #{email.to}"
     end
 
     should 'set custom delivery times in the created email record' do
-      assert TestMailer.delayed_email.deliver
+      assert TestMailer.delayed_email.deliver_now
       assert email = Email.first
       assert email.delivery_time
 
@@ -37,22 +37,22 @@ class TestMailerTest < ActionMailer::TestCase
     end
 
     should 'set custom SMTP settings in the email record' do
-      assert TestMailer.custom_smtp_email.deliver
+      assert TestMailer.custom_smtp_email.deliver_now
       assert email = Email.first
       assert email.smtp_settings
       assert_equal email.smtp_settings, {
-          :address   => 'localhost',
-          :port      => 25,
-          :domain    => 'localhost.localdomain',
-          :user_name => 'some.user',
-          :password  => 'some.password',
-          :authentication => :plain,
-          :enable_starttls_auto => true
-      }
+                                          :address              => 'localhost',
+                                          :port                 => 25,
+                                          :domain               => 'localhost.localdomain',
+                                          :user_name            => 'some.user',
+                                          :password             => 'some.password',
+                                          :authentication       => :plain,
+                                          :enable_starttls_auto => true
+                                      }
     end
 
     should 'set custom attributes in the email record' do
-      assert TestMailer.custom_attribute_email.deliver
+      assert TestMailer.custom_attribute_email.deliver_now
       assert email = Email.first
       assert_equal 42, email.a_number
     end
@@ -75,7 +75,7 @@ class TestMailerTest < ActionMailer::TestCase
 
     should 'send out basic emails correctly' do
       if mailcatcher_running?
-        assert TestMailer.basic_email.deliver
+        assert TestMailer.basic_email.deliver_now
         run_ar_sendmail
         assert_equal @old_email_count + 1, received_emails.count, 'Email was not sent to local SMTP server'
       end
@@ -90,7 +90,7 @@ class TestMailerTest < ActionMailer::TestCase
   #
   def run_ar_sendmail
     run_options = {
-        :chdir => Rails.root,
+        :chdir     => Rails.root,
         :rails_env => 'test',
         :log_level => 'debug'
     }
@@ -111,12 +111,12 @@ class TestMailerTest < ActionMailer::TestCase
 
   def setup_mailcatcher_settings
     ActionMailer::Base.smtp_settings = {
-        :address   => 'localhost',
-        :port      => 1025,
-        :domain    => 'localhost.localdomain',
-        :user_name => 'some.user',
-        :password  => 'some.password',
-        :authentication => :plain,
+        :address              => 'localhost',
+        :port                 => 1025,
+        :domain               => 'localhost.localdomain',
+        :user_name            => 'some.user',
+        :password             => 'some.password',
+        :authentication       => :plain,
         :enable_starttls_auto => true
     }
   end

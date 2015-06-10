@@ -46,14 +46,14 @@ class ActionMailer::Base
   #
   def ar_mailer_setting(key, value = nil)
     if headers[:ar_mailer_settings]
-      settings = YAML::load(headers[:ar_mailer_settings]).stringify_keys
+      settings = JSON.parse(headers[:ar_mailer_settings]).stringify_keys
     else
       settings = {}
     end
 
     if value
       settings[key.to_s] = value
-      headers[:ar_mailer_settings] = YAML::dump(settings)
+      headers[:ar_mailer_settings] = settings.stringify_keys.to_json
     else
       settings[key.to_s]
     end
@@ -77,8 +77,21 @@ module ActionMailer
     # Actually creates the email record in the database
     #
     def deliver!(mail)
+      attributes = email_attributes(mail)
+      mail.destinations.each do |destination|
+        ArMailerRevised.email_class.create!(attributes.merge({:to => destination}))
+      end
+    end
+
+    private
+
+    #
+    # Generates the ActiveRecord attributes for the newly generated Email records
+    # from custom set ar_mailer_settings
+    #
+    def email_attributes(mail)
       if mail['ar_mailer_settings']
-        ar_settings                = YAML::load(mail['ar_mailer_settings'].value).stringify_keys
+        ar_settings                = JSON.parse(mail['ar_mailer_settings'].value).stringify_keys
         mail['ar_mailer_settings'] = nil
       else
         ar_settings = {}
@@ -86,15 +99,23 @@ module ActionMailer
 
       email_options = {}
       email_options[:delivery_time] = ar_settings.delete('delivery_time')
-      email_options[:smtp_settings] = ar_settings.delete('smtp_settings').try(:symbolize_keys)
+      email_options[:smtp_settings] = smtp_settings(ar_settings)
       email_options[:mail]          = mail.encoded
       email_options[:from]          = (mail['return-path'] && mail['return-path'].spec) || mail.from.first
       email_options.reverse_merge!(ar_settings['custom_attributes'] || {})
-
-      mail.destinations.each do |destination|
-        ArMailerRevised.email_class.create!(email_options.merge({:to => destination}))
-      end
     end
+
+    #
+    # Generates custom SMTP settings from the given mail header settings
+    #
+    def smtp_settings(ar_settings)
+      result = ar_settings.delete('smtp_settings').try(:symbolize_keys)
+      if result && result[:authentication]
+        result[:authentication] = result[:authentication].to_sym
+      end
+      result
+    end
+
   end
 end
 
