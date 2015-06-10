@@ -20,9 +20,9 @@ class TestMailerTest < ActionMailer::TestCase
 
     should 'create a new email record in the database' do
       assert TestMailer.basic_email.deliver_now
-      assert email = Email.first, 'No new record was created'
+      assert email      = Email.first, 'No new record was created'
       assert email.from = 'from@example.com', "Wrong sender email address set: #{email.from}"
-      assert email.to = 'basic_email@example.com', "Wrong recipient email address set: #{email.to}"
+      assert email.to   = 'basic_email@example.com', "Wrong recipient email address set: #{email.to}"
     end
 
     should 'set custom delivery times in the created email record' do

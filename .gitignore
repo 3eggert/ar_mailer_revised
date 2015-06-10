@@ -18,5 +18,6 @@ tmp
 .idea/
 test/dummy/log/
 test/dummy/tmp
+test/dummy/db/test.sqlite3
 .ruby-gemset
 .ruby-version
