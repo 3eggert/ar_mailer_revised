@@ -28,9 +28,9 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'shoulda', '~> 3.5'
   spec.add_development_dependency 'mailcatcher', '~> 0.2'
 
-  spec.add_dependency 'rails', '~> 4'
+  spec.add_dependency 'rails', '~> 5.1'
   spec.add_dependency 'log4r', '~> 1'
   spec.add_dependency 'hirb', '~> 0'
 
-  spec.required_ruby_version = '~> 2'
+  spec.required_ruby_version = '~> 2.4'
 end
