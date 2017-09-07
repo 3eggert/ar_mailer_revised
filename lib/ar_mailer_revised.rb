@@ -7,10 +7,6 @@ ActionMailer::Base.add_delivery_method :activerecord, ActionMailer::DeliveryMeth
 
 module ArMailerRevised
 
-  @@config ||= OpenStruct.new({
-                                    :email_class => 'Email'
-                                })
-
   def self.configuration(&proc)
     @@config ||= OpenStruct.new({
                                     :email_class => 'Email'
