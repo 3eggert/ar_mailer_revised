@@ -6,10 +6,13 @@ require 'ar_mailer_revised/email_scaffold'
 ActionMailer::Base.add_delivery_method :activerecord, ActionMailer::DeliveryMethodActiveRecord
 
 module ArMailerRevised
+  @@config ||= OpenStruct.new({
+    :email_class => 'Email'
+  })
   def self.configuration(&proc)
     @@config ||= OpenStruct.new({
-                                    :email_class => 'Email'
-                                })
+      :email_class => 'Email'
+    })
     if block_given?
       yield @@config
       @@config.email_class = (@@config.email_class || 'Email').to_s.classify
