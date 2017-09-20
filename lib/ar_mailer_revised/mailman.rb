@@ -194,16 +194,15 @@ module ArMailerRevised
     def send_email(smtp, email)
       logger.info "Sending Email ##{email.id}"
       smtp.send_message(email.mail, email.from, email.to)
-      EmailBackup.create(email)
+      EmailBackup.create(email.attributes)
       email.destroy
+    rescue Net::SMTPServerBusy => e
+      logger.warn 'Server is currently busy, trying again next batch'
+      logger.warn 'Complete Error: ' + e.to_s
+    rescue Net::SMTPSyntaxError, Net::SMTPFatalError, Net::SMTPUnknownError, Net::ReadTimeout => e
+      logger.warn 'Other exception, trying again next batch: ' + e.to_s
+      adjust_last_send_attempt!(email)
     end
-  rescue Net::SMTPServerBusy => e
-    logger.warn 'Server is currently busy, trying again next batch'
-    logger.warn 'Complete Error: ' + e.to_s
-  rescue Net::SMTPSyntaxError, Net::SMTPFatalError, Net::SMTPUnknownError, Net::ReadTimeout => e
-    logger.warn 'Other exception, trying again next batch: ' + e.to_s
-    adjust_last_send_attempt!(email)
-  end
 
     #-----------------------------------------------------------------
     #                    SMTP connection error handling
