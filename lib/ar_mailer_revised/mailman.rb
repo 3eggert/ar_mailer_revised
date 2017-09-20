@@ -58,8 +58,8 @@ module ArMailerRevised
         logger.info "Using setting #{setting.address}:#{setting.port}/#{setting.user_name}"
 
         smtp = Net::SMTP.new(setting.address, setting.port)
-        smtp.open_timeout = 100
-        smtp.read_timeout = 100
+        smtp.open_timeout = 60
+        smtp.read_timeout = 60
         setup_tls(smtp, setting)
 
         #Connect to the server and handle possible errors
