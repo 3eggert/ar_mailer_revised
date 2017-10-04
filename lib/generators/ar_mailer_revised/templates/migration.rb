@@ -28,5 +28,5 @@ class Create<%= model_name.classify.pluralize %> < ActiveRecord::Migration
 
       t.timestamps
     end
-  end
+ end
 end
