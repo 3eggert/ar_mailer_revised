@@ -193,7 +193,7 @@ module ArMailerRevised
     #
     def send_email(smtp, email)
       email.fail_reasons = {} if email.fail_reasons.nil?
-      if email.failed_tries > 6
+      if email.failed_tries.to_i > 6
         logger.info "retry count exeeded Email ##{email.id}"
         FailedEmail.create(email.attributes)
         email.destroy
