@@ -1,5 +1,5 @@
 #
-# Class used as email model for ArMailerRevised
+# Class used as email_backups model for ArMailerRevised
 #
 # @attr [String] from
 #   The email sender
@@ -27,6 +27,5 @@ class <%= model_name.classify %> < ActiveRecord::Base
   include ArMailerRevised::EmailScaffold
 
   serialize :fail_resons, JSON
-
 
 end

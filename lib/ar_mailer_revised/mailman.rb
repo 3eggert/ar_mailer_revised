@@ -192,6 +192,13 @@ module ArMailerRevised
     # Errors are logged with the :warn level.
     #
     def send_email(smtp, email)
+      email.fail_reasons = {} if email.fail_reasons.nil?
+      if email.failed_tries > 6
+        logger.info "retry count exeeded Email ##{email.id}"
+        FailedEmail.create(email.attributes)
+        email.destroy
+        return
+      end
       logger.info "Sending Email ##{email.id}"
       smtp.send_message(email.mail, email.from, email.to)
       EmailBackup.create(email.attributes)
@@ -201,6 +208,9 @@ module ArMailerRevised
       logger.warn 'Complete Error: ' + e.to_s
     rescue Net::SMTPSyntaxError, Net::SMTPFatalError, Net::SMTPUnknownError, Net::ReadTimeout => e
       logger.warn 'Other exception, trying again next batch: ' + e.to_s
+      email.failed_tries = email.failed_tries.to_i + 1
+      email.fail_reasons.merge!(email.failed_tries=>e.to_s)
+      email.save
       adjust_last_send_attempt!(email)
     end
 
@@ -312,7 +322,7 @@ module ArMailerRevised
     #
     def adjust_last_send_attempt!(email)
       logger.info "Setting last send attempt for email ##{email.id} (was: #{email.last_send_attempt})"
-      email.last_send_attempt = Time.now.to_i
+      email.last_send_attempt = (Time.now + (email.failed_tries.to_i**4).minutes).to_i
       email.save(:validate => false)
     end
 

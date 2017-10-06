@@ -1,6 +1,6 @@
 class Create<%= model_name.classify.pluralize %> < ActiveRecord::Migration
   def change
-    create_table :<%= model_name.underscore.pluralize %> do |t|
+    create_table :<%= model_backups_name.underscore.pluralize %> do |t|
       t.string   'from'
       t.string   'to'
 
@@ -32,5 +32,5 @@ class Create<%= model_name.classify.pluralize %> < ActiveRecord::Migration
 
       t.timestamps
     end
- end
+  end
 end

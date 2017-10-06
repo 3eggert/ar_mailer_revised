@@ -26,7 +26,6 @@ class <%= model_name.classify %> < ActiveRecord::Base
   #Helper methods and named scopes provided by ArMailerRevised
   include ArMailerRevised::EmailScaffold
 
-  serialize :fail_resons, JSON
 
 
 end
