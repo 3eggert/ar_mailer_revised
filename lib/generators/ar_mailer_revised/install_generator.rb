@@ -24,11 +24,11 @@ module ArMailerRevised
         migration_template 'migration.rb', "db/migrate/create_#{model_name.classify.underscore.pluralize}.rb"
         if model_backup_name.present?
           template 'model_backup.rb', "app/models/#{model_backup_name.classify.underscore}.rb"
-          migration_template 'migration.rb', "db/migrate/create_#{model_backup_name.classify.underscore.pluralize}.rb"
+          migration_template 'migration_backups.rb', "db/migrate/create_#{model_backup_name.classify.underscore.pluralize}.rb"
         end
         if model_failed_name.present?
           template 'model_failed.rb', "app/models/#{model_failed_name.classify.underscore}.rb"
-          migration_template 'migration.rb', "db/migrate/create_#{model_failed_name.classify.underscore.pluralize}.rb"
+          migration_template 'migration_failed_emails.rb', "db/migrate/create_#{model_failed_name.classify.underscore.pluralize}.rb"
         end
 
         initializer 'ar_mailer_revised.rb', <<INIT
