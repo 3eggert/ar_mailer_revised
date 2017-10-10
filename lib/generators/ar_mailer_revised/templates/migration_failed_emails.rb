@@ -1,4 +1,4 @@
-class Create<%= model_name.classify.pluralize %> < ActiveRecord::Migration
+class Create<%= model_name.classify.pluralize %> < ActiveRecord::Migration[5.1]
   def change
     create_table :<%= model_name.underscore.pluralize %> do |t|
       t.string   'from'
