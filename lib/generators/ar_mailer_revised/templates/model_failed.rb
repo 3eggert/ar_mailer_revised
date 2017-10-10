@@ -22,7 +22,7 @@
 #   If this value is +nil+, the system will use the default SMTP settings set up in the application
 #
 
-class EmailFailed < ActiveRecord::Base
+class <%= model_failed_name.classify %> < ActiveRecord::Base
   #Helper methods and named scopes provided by ArMailerRevised
   include ArMailerRevised::EmailScaffold
 
