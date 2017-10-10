@@ -195,13 +195,13 @@ module ArMailerRevised
       email.fail_reasons = {} if email.fail_reasons.nil?
       if email.failed_tries.to_i > 6
         logger.info "retry count exeeded Email ##{email.id}"
-        FailedEmail.create(email.attributes)
+        ArMailerRevised.email_failed_class.create(email.attributes)
         email.destroy
         return
       end
       logger.info "Sending Email ##{email.id}"
       smtp.send_message(email.mail, email.from, email.to)
-      EmailBackup.create(email.attributes)
+      ArMailerRevised.email_backup_class.create(email.attributes)
       email.destroy
     rescue Net::SMTPServerBusy => e
       logger.warn 'Server is currently busy, trying again next batch'

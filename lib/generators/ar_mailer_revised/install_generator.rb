@@ -6,7 +6,8 @@ module ArMailerRevised
       source_root File.expand_path('../templates', __FILE__)
 
       argument :model_name, :type => :string, :default => "Email"
-      argument :model_backups_name, :type => :string, :default => nil
+      argument :model_backup_name, :type => :string, :default => "EmailBackup"
+      argument :model_failed_name, :type => :string, :default => "FailedEmail"
 
       def self.next_migration_number(path)
         if @prev_migration_nr
@@ -21,9 +22,13 @@ module ArMailerRevised
       def create_install
         template 'model.rb', "app/models/#{model_name.classify.underscore}.rb"
         migration_template 'migration.rb', "db/migrate/create_#{model_name.classify.underscore.pluralize}.rb"
-        if model_backups_name.present?
-          template 'model_backups.rb', "app/models/#{model_backups_name.classify.underscore}.rb"
-          migration_template 'migration.rb', "db/migrate/create_#{model_backups_name.classify.underscore.pluralize}.rb"
+        if model_backup_name.present?
+          template 'model_backup.rb', "app/models/#{model_backup_name.classify.underscore}.rb"
+          migration_template 'migration.rb', "db/migrate/create_#{model_backup_name.classify.underscore.pluralize}.rb"
+        end
+        if model_failed_name.present?
+          template 'model_failed.rb', "app/models/#{model_failed_name.classify.underscore}.rb"
+          migration_template 'migration.rb', "db/migrate/create_#{model_failed_name.classify.underscore.pluralize}.rb"
         end
 
         initializer 'ar_mailer_revised.rb', <<INIT
@@ -33,7 +38,8 @@ ArMailerRevised.configuration do |config|
   #If you created it using the ArMailerRevised generator, the below
   #model name should already be correct.
   config.email_class = \"#{model_name}\"
-  #{"config.email_backups_class = \"" + model_backups_name + "\"" if model_backups_name.present?}
+  #{"config.email_backup_class = \"" + model_backup_name + "\"" if model_backup_name.present?}
+  #{"config.email_failed_class = \"" + model_failed_name + "\"" if model_failed_name.present?}
 
 end
 INIT
