@@ -46,14 +46,18 @@ class ActionMailer::Base
   #
   def ar_mailer_setting(key, value = nil)
     if headers[:ar_mailer_settings]
-      settings = JSON.parse(headers[:ar_mailer_settings]).stringify_keys
+      settings = JSON.parse(headers[:ar_mailer_settings].value).stringify_keys
     else
       settings = {}
     end
 
     if value
       settings[key.to_s] = value
-      headers[:ar_mailer_settings] = settings.stringify_keys.to_json
+      if headers[:ar_mailer_settings].nil?
+        headers[:ar_mailer_settings] = settings.stringify_keys.to_json
+      else
+        headers[:ar_mailer_settings].value = settings.stringify_keys.to_json
+      end
     else
       settings[key.to_s]
     end
