@@ -9,6 +9,7 @@ module ArMailerRevised
   @@config ||= OpenStruct.new({
     :email_class => 'Email'
   })
+
   def self.configuration(&proc)
     @@config ||= OpenStruct.new({
       :email_class => 'Email'
