@@ -199,7 +199,7 @@ module ArMailerRevised
         email.destroy
         return
       end
-      logger.info "Sending Email ##{email.id}"
+      logger.info "Sending Email 1 ##{email.id}"
       smtp.send_message(email.mail, email.from, email.to)
       ArMailerRevised.email_backup_class.create(email.attributes)
       email.destroy
