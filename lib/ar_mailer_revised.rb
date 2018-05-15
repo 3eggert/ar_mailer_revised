@@ -54,7 +54,7 @@ module ArMailerRevised
   # @return [String] (Email)
   #   The email class' name
   #
-  def self.email_failed_class
+  def self.email_failed_class_name
     @@config.email_failed_class.classify
   end
 
@@ -63,14 +63,14 @@ module ArMailerRevised
   #   The class used to create new emails in the system
   #
   def self.email_backup_class
-    self.email_backup__class_name.constantize
+    self.email_backup_class_name.constantize
   end
 
   #
   # @return [String] (Email)
   #   The email class' name
   #
-  def self.email_backup_class
-    @@config.email_backup__class.classify
+  def self.email_backup_class_name
+    @@config.email_backup_class.classify
   end
 end
