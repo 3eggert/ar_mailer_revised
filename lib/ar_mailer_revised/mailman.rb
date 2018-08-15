@@ -195,7 +195,9 @@ module ArMailerRevised
       email.fail_reasons = {} if email.fail_reasons.nil?
       if email.failed_tries.to_i > 6
         logger.info "retry count exeeded Email ##{email.id}"
-        ArMailerRevised.email_failed_class.create(email.attributes)
+        email_hash = email.attributes
+        email_hash.delete("id")
+        ArMailerRevised.email_failed_class.create(email_hash)
         email.destroy
         return
       end
