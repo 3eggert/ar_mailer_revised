@@ -203,7 +203,7 @@ module ArMailerRevised
       end
       logger.info "Sending Email 1 ##{email.id}"
       smtp.send_message(email.mail, email.from, email.to)
-      ArMailerRevised.email_backup_class.create(email.attributes)
+      ArMailerRevised.email_backup_class.create(email.attributes.delete("id"))
       email.destroy
     rescue Net::SMTPServerBusy => e
       logger.warn 'Server is currently busy, trying again next batch'
@@ -214,6 +214,8 @@ module ArMailerRevised
       email.fail_reasons.merge!(email.failed_tries=>e.to_s)
       email.save
       adjust_last_send_attempt!(email)
+    rescue Exception => e
+      raise e
     end
 
     #-----------------------------------------------------------------
