@@ -74,13 +74,13 @@ module ArMailerRevised
         rescue Net::SMTPSyntaxError => e
           handle_smtp_syntax_error(setting, e, grouped_emails)
         rescue Net::SMTPServerBusy => e
-          logger.warn 'Server is busy, trying again next batch.'
+          logger.warn 'Net::SMTPServerBusy: Server is busy, trying again next batch.'
           logger.warn 'Complete Error: ' + e.to_s
         rescue Net::OpenTimeout, Net::ReadTimeout => e
           handle_smtp_timeout(setting, e, grouped_emails)
         rescue Net::SMTPFatalError, Net::SMTPUnknownError => e
           #TODO: Should we remove the custom SMTP settings here as well?
-          logger.warn 'Other SMTP error, trying again next batch.'
+          logger.warn 'Net::SMTPFatalError: Other SMTP error, trying again next batch.'
           logger.warn 'Complete Error: ' + e.to_s
         rescue OpenSSL::SSL::SSLError => e
           handle_ssl_error(setting, e, grouped_emails)
@@ -203,13 +203,15 @@ module ArMailerRevised
       end
       logger.info "Sending Email 1 ##{email.id}"
       smtp.send_message(email.mail, email.from, email.to)
-      ArMailerRevised.email_backup_class.create(email.attributes.delete("id"))
+      email_hash = email.attributes
+      email_hash.delete("id")
+      ArMailerRevised.email_backup_class.create(email_hash)
       email.destroy
     rescue Net::SMTPServerBusy => e
       logger.warn 'Server is currently busy, trying again next batch'
-      logger.warn 'Complete Error: ' + e.to_s
+      logger.warn 'Net::SMTPServerBusy: Complete Error: ' + e.to_s
     rescue Net::SMTPSyntaxError, Net::SMTPFatalError, Net::SMTPUnknownError, Net::ReadTimeout => e
-      logger.warn 'Other exception, trying again next batch: ' + e.to_s
+      logger.warn 'Net::SMTPSyntaxError: Other exception, trying again next batch: ' + e.to_s
       email.failed_tries = email.failed_tries.to_i + 1
       email.fail_reasons.merge!(email.failed_tries=>e.to_s)
       email.save
