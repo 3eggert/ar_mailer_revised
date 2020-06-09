@@ -24,7 +24,8 @@ module ArMailerRevised
     end
 
     def run
-     logger.debug "ArMailerRevised initialized with the following options:\n" + Hirb::Helpers::AutoTable.render(@options)
+     logger.info "ArMailerRevised--> enter Mailman:run"
+     logger.info "ArMailerRevised initialized with the following options:\n" + Hirb::Helpers::AutoTable.render(@options)
      deliver_emails
     end
 
@@ -43,6 +44,7 @@ module ArMailerRevised
     # @todo: Probably add better error handling than simple re-tries
     #
     def deliver_emails
+      logger.info "ArMailerRevised--> enter Mailman:deliver_email:"
       total_mail_count = ArMailerRevised.email_class.ready_to_deliver.count
       emails           = ArMailerRevised.email_class.ready_to_deliver.with_batch_size(@options[:batch_size])
 
@@ -192,6 +194,7 @@ module ArMailerRevised
     # Errors are logged with the :warn level.
     #
     def send_email(smtp, email)
+      logger.info "ArMailerRevised--> enter Mailman:send_email"
       email.fail_reasons = {} if email.fail_reasons.nil?
       if email.failed_tries.to_i > 6
         logger.info "retry count exeeded Email ##{email.id}"
