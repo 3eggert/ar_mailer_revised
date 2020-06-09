@@ -20,19 +20,19 @@ module ArMailerRevised
         # Processes +args+ and runs as appropriate
 
         def run(args = ARGV)
-          logger.info "ArMailerRevised--> enter CommandLine:run"
+          $stderr.puts "ArMailerRevised--> enter CommandLine:run"
           options = process_args(args)
-          logger.info "ArMailerRevised--> CommandLine:run 1"
+          $stderr.puts "ArMailerRevised--> CommandLine:run 1"
 
           if options[:display_queue]
-          logger.info "ArMailerRevised--> CommandLine:run 2"
+          $stderr.puts "ArMailerRevised--> CommandLine:run 2"
             display_mail_queue(options[:display_queue])
             exit
           end
-          logger.info "ArMailerRevised--> CommandLine:run 3"
+          $stderr.puts "ArMailerRevised--> CommandLine:run 3"
 
           new(options).run
-          logger.info "ArMailerRevised--> CommandLine:run 4"
+          $stderr.puts "ArMailerRevised--> CommandLine:run 4"
 
         rescue SystemExit
           raise

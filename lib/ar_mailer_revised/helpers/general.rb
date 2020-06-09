@@ -20,8 +20,12 @@ module ArMailerRevised
       # @return [Log4r::Logger] the file output logger
       #
       def logger
+        $stderr.puts "ArMailerRevised:General:logger enter"
         unless @logger
+          $stderr.puts "ArMailerRevised:General:logger #{@options.inspect}"
+          $stderr.puts "ArMailerRevised:General:logger 1"
           @logger            = Log4r::Logger.new 'ar_mailer'
+          $stderr.puts ""
 
           if %w[stdout stderr].include?(@options[:log_file])
             outputter = Log4r::Outputter.send(@options[:log_file])
