@@ -49,9 +49,17 @@ module ArMailerRevised
     #
     def deliver_emails
       @lf.puts "ArMailerRevised--> enter Mailman:deliver_emails:" ; @lf.flush
-      total_mail_count = ArMailerRevised.email_class.ready_to_deliver.count
-      emails           = ArMailerRevised.email_class.ready_to_deliver.with_batch_size(@options[:batch_size])
+      logger.info("ArMailerRevised--> enter Mailman:deliver_emails:")
+      begin
+        total_mail_count = ArMailerRevised.email_class.ready_to_deliver.count
+      rescue Exception => e
+        logger.info( "ArMailerRevised--> enter Mailman:deliver_emails:Exception" )
+        @lf.puts "ArMailerRevised--> enter Mailman:deliver_emails:Exception" ; @lf.flush
+        @lf.puts "ArMailerRevised--> enter Mailman:deliver_emails: e: #{e}" ; @lf.flush
+      end
       @lf.puts "ArMailerRevised--> enter Mailman:deliver_emails: total_mail_count: #{total_mail_count}" ; @lf.flush
+      emails           = ArMailerRevised.email_class.ready_to_deliver.with_batch_size(@options[:batch_size])
+      @lf.puts "ArMailerRevised--> enter Mailman:deliver_emails: 0" ; @lf.flush
 
       if emails.empty?
         @lf.puts "ArMailerRevised--> enter Mailman:deliver_emails: emails.empty" ; @lf.flush
