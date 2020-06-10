@@ -51,13 +51,16 @@ module ArMailerRevised
       @lf.puts "ArMailerRevised--> enter Mailman:deliver_emails:" ; @lf.flush
       total_mail_count = ArMailerRevised.email_class.ready_to_deliver.count
       emails           = ArMailerRevised.email_class.ready_to_deliver.with_batch_size(@options[:batch_size])
+      @lf.puts "ArMailerRevised--> enter Mailman:deliver_emails: total_mail_count: #{total_mail_count}" ; @lf.flush
 
       if emails.empty?
+        @lf.puts "ArMailerRevised--> enter Mailman:deliver_emails: emails.empty" ; @lf.flush
         logger.info 'No emails to be sent, existing'
         return
       end
 
       logger.info "Starting batch sending process, sending #{emails.count} / #{total_mail_count} mails"
+      @lf.puts "ArMailerRevised--> enter Mailman:deliver_emails: Starting batch sending process, sending #{emails.count} / #{total_mail_count} mails" ; @lf.flush
 
       group_emails_by_settings(emails).each do |settings_hash, grouped_emails|
         setting = OpenStruct.new(settings_hash)
