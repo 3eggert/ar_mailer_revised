@@ -20,6 +20,7 @@ module ArMailerRevised
         # Processes +args+ and runs as appropriate
 
         def run(args = ARGV)
+          $stdout.puts "ArMailerRevised--> enter CommandLine:run"
           $stderr.puts "ArMailerRevised--> enter CommandLine:run"
           options = process_args(args)
           $stderr.puts "ArMailerRevised--> CommandLine:run 1"
