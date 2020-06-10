@@ -38,10 +38,11 @@ module ArMailerRevised
           outputter.formatter = Log4r::PatternFormatter.new(:pattern => '[%5l - %c] %d :: %m')
           @logger.outputters = outputter
 
+          @logger.level      = log_level
+
           $stderr.puts "--> stderr"
           $stdout.puts "--> stdout"
           puts "--> puts"
-          @logger.level      = log_level
           @logger.info ("--> INFO")
           @logger.debug ("--> DEBUG")
           @logger.warning ("--> WARNING")
