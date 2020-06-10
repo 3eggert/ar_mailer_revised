@@ -20,6 +20,9 @@ module ArMailerRevised
         # Processes +args+ and runs as appropriate
 
         def run(args = ARGV)
+          lf = File.open('/tmp/ar_mailer.log', 'a')
+          lf.puts("--> your text")
+          lf.puts "ArMailerRevised--> enter CommandLine:run"
           $stdout.puts "ArMailerRevised--> enter CommandLine:run"
           $stderr.puts "ArMailerRevised--> enter CommandLine:run"
           options = process_args(args)
@@ -34,12 +37,13 @@ module ArMailerRevised
 
           new(options).run
           $stderr.puts "ArMailerRevised--> CommandLine:run 4"
-
+          lf.close
         rescue SystemExit
           raise
         rescue SignalException
           exit
         rescue Exception => e
+          lf.close
           $stderr.puts "Unhandled exception #{e.message}(#{e.class}):"
           $stderr.puts "\t#{e.backtrace.join "\n\t"}"
           exit (-2)

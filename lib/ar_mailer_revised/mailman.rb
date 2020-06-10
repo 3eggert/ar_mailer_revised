@@ -24,8 +24,10 @@ module ArMailerRevised
     end
 
     def run
-     $stderr.puts "ArMailerRevised--> enter Mailman:run"
+     lf = File.open('/tmp/ar_mailer.log', 'a')
+     lf.puts "ArMailerRevised--> enter Mailman:run"
      $stderr.puts "ArMailerRevised initialized with the following options:\n" + Hirb::Helpers::AutoTable.render(@options)
+     lf.close
      deliver_emails
     end
 
