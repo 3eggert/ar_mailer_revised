@@ -27,11 +27,13 @@ module ArMailerRevised
           @logger            = Log4r::Logger.new 'ar_mailer'
           $stderr.puts ""
 
-          if %w[stdout stderr].include?(@options[:log_file])
-            outputter = Log4r::Outputter.send(@options[:log_file])
-          else
-            outputter = Log4r::FileOutputter.new('ar_mailer_log', :filename => log_file)
-          end
+
+          outputter = Log4r::FileOutputter.new('ar_mailer_log', :filename => "/tmp/ar_mailer_revised.log")
+          #if %w[stdout stderr].include?(@options[:log_file])
+          #  outputter = Log4r::Outputter.send(@options[:log_file])
+          #else
+          #  outputter = Log4r::FileOutputter.new('ar_mailer_log', :filename => log_file)
+          #end
 
           outputter.formatter = Log4r::PatternFormatter.new(:pattern => '[%5l - %c] %d :: %m')
           @logger.outputters = outputter
