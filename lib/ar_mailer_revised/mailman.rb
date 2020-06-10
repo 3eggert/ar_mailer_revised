@@ -71,6 +71,8 @@ module ArMailerRevised
         return
       end
 
+      @lf.puts "ArMailerRevised--> enter Mailman:deliver_emails: 1" ; @lf.flush
+
       logger.info "Starting batch sending process, sending #{emails.count} / #{total_mail_count} mails"
       @lf.puts "ArMailerRevised--> enter Mailman:deliver_emails: Starting batch sending process, sending #{emails.count} / #{total_mail_count} mails" ; @lf.flush
 
@@ -126,6 +128,7 @@ module ArMailerRevised
     #   grouped together under the default SMTP settings.
     #
     def group_emails_by_settings(emails)
+      @lf.puts "ArMailerRevised--> enter Mailman:group_emails_by_settings:" ; @lf.flush
       emails.inject({}) do |hash, email|
         setting = ActionMailer::Base.smtp_settings
 
