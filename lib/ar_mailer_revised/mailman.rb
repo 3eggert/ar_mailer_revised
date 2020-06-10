@@ -50,8 +50,8 @@ module ArMailerRevised
     def deliver_emails
       @lf.puts "ArMailerRevised--> enter Mailman:deliver_emails:" ; @lf.flush
       logger.info("ArMailerRevised--> enter Mailman:deliver_emails:")
-      @lf.puts("ArMailerRevised--> enter Mailman:deliver_emails: name:#{ArMailerRevised.email_class.name}")
-      @lf.puts("ArMailerRevised--> enter Mailman:deliver_emails: methods:#{ArMailerRevised.email_class.methods}")
+      @lf.puts("ArMailerRevised--> enter Mailman:deliver_emails: name:#{ArMailerRevised.email_class.name}"); @lf.flush
+      @lf.puts("ArMailerRevised--> enter Mailman:deliver_emails: methods:#{ArMailerRevised.email_class.methods}"); @lf.flush
       begin
         total_mail_count = ArMailerRevised.email_class.ready_to_deliver.count
       rescue Exception => e
