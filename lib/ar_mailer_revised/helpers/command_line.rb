@@ -21,7 +21,6 @@ module ArMailerRevised
 
         def run(args = ARGV)
           @lf = File.open('/tmp/ar_mailer.log', 'a')
-          @lf.puts("--> your text")
           @lf.puts "ArMailerRevised--> enter CommandLine:run"
           @lf.puts "ArMailerRevised--> enter CommandLine:run"
           options = process_args(args)

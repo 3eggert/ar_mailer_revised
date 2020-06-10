@@ -48,8 +48,7 @@ module ArMailerRevised
     # @todo: Probably add better error handling than simple re-tries
     #
     def deliver_emails
-      @lf.puts "ArMailerRevised--> enter Mailman:deliver_email:"
-     @lf.flush
+      @lf.puts "ArMailerRevised--> enter Mailman:deliver_emails:" ; @lf.flush
       total_mail_count = ArMailerRevised.email_class.ready_to_deliver.count
       emails           = ArMailerRevised.email_class.ready_to_deliver.with_batch_size(@options[:batch_size])
 
@@ -199,15 +198,18 @@ module ArMailerRevised
     # Errors are logged with the :warn level.
     #
     def send_email(smtp, email)
-     @lf.flush
-      @lf.puts "ArMailerRevised--> enter Mailman:send_email"
+      @lf.puts "ArMailerRevised--> enter Mailman:send_email" ; @lf.flush
       email.fail_reasons = {} if email.fail_reasons.nil?
       if email.failed_tries.to_i > 6
+        @lf.puts "ArMailerRevised--> Mailman:send_email retry count exeeded Email ##{email.id}" ; @lf.flush
         logger.info "retry count exeeded Email ##{email.id}"
         email_hash = email.attributes
         email_hash.delete("id")
+        @lf.puts "ArMailerRevised--> Mailman:send_email 1" ; @lf.flush
         ArMailerRevised.email_failed_class.create(email_hash)
+        @lf.puts "ArMailerRevised--> Mailman:send_email 2" ; @lf.flush
         email.destroy
+        @lf.puts "ArMailerRevised--> Mailman:send_email 3" ; @lf.flush
         return
       end
       logger.info "Sending Email 1 ##{email.id}"
