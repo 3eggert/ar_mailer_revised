@@ -29,7 +29,7 @@ module ArMailerRevised
      @lf.puts "ArMailerRevised--> enter Mailman:run"
      @lf.puts "ArMailerRevised initialized with the following options:\n" + Hirb::Helpers::AutoTable.render(@options)
      $stderr.puts "ArMailerRevised initialized with the following options:\n" + Hirb::Helpers::AutoTable.render(@options)
-     #lf.close
+     @lf.flush
      deliver_emails
     end
 
@@ -49,6 +49,7 @@ module ArMailerRevised
     #
     def deliver_emails
       @lf.puts "ArMailerRevised--> enter Mailman:deliver_email:"
+     @lf.flush
       total_mail_count = ArMailerRevised.email_class.ready_to_deliver.count
       emails           = ArMailerRevised.email_class.ready_to_deliver.with_batch_size(@options[:batch_size])
 
@@ -198,6 +199,7 @@ module ArMailerRevised
     # Errors are logged with the :warn level.
     #
     def send_email(smtp, email)
+     @lf.flush
       @lf.puts "ArMailerRevised--> enter Mailman:send_email"
       email.fail_reasons = {} if email.fail_reasons.nil?
       if email.failed_tries.to_i > 6
