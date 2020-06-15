@@ -45,7 +45,6 @@ module ArMailerRevised
           puts "--> puts"
           @logger.info ("--> INFO")
           @logger.debug ("--> DEBUG")
-          @logger.warning ("--> WARNING")
           @logger.error ("--> ERROR")
         end
         @logger
