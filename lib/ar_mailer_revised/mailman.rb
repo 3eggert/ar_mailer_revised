@@ -332,6 +332,7 @@ module ArMailerRevised
       @lf = File.open('/tmp/ar_mailer.log', 'a')
       @lf.puts "Mailman--> Other error while connecting to '#{setting.host}:#{setting.port}'"
       @lf.puts "Mailman--> Complete Error (#{exception.class.to_s}): " + exception.to_s
+      @lf.close
       logger.warn "Other error while connecting to '#{setting.host}:#{setting.port}'"
       logger.warn "Complete Error (#{exception.class.to_s}): " + exception.to_s
       handle_custom_setting_removal(setting, emails)
