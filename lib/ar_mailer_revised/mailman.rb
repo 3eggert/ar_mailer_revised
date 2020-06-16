@@ -21,15 +21,15 @@ module ArMailerRevised
     #
     def initialize(options = {})
       @options = options
-      @lf = File.open('/tmp/ar_mailer.log', 'a')
+#      @lf = File.open('/tmp/ar_mailer.log', 'a')
     end
 
     def run
      #lf = File.open('/tmp/ar_mailer.log', 'a')
-     @lf.puts "ArMailerRevised--> enter Mailman:run"
-     @lf.puts "ArMailerRevised initialized with the following options:\n" + Hirb::Helpers::AutoTable.render(@options)
+#     @lf.puts "ArMailerRevised--> enter Mailman:run"
+#     @lf.puts "ArMailerRevised initialized with the following options:\n" + Hirb::Helpers::AutoTable.render(@options)
      $stderr.puts "ArMailerRevised initialized with the following options:\n" + Hirb::Helpers::AutoTable.render(@options)
-     @lf.flush
+#     @lf.flush
      deliver_emails
     end
 
@@ -48,33 +48,33 @@ module ArMailerRevised
     # @todo: Probably add better error handling than simple re-tries
     #
     def deliver_emails
-      @lf.puts "ArMailerRevised--> enter Mailman:deliver_emails:" ; @lf.flush
-      @lf.puts "ArMailerRevised--> enter Mailman:deliver_emails: b" ; @lf.flush
-      @lf.puts "ArMailerRevised--> enter Mailman:deliver_emails: #{Email.ready_to_deliver.count}" ; @lf.flush
+#      @lf.puts "ArMailerRevised--> enter Mailman:deliver_emails:" ; @lf.flush
+#      @lf.puts "ArMailerRevised--> enter Mailman:deliver_emails: b" ; @lf.flush
+#      @lf.puts "ArMailerRevised--> enter Mailman:deliver_emails: #{Email.ready_to_deliver.count}" ; @lf.flush
       #logger.info("ArMailerRevised--> enter Mailman:deliver_emails:")
-      @lf.puts("ArMailerRevised--> enter Mailman:deliver_emails: name:#{ArMailerRevised.email_class.name}"); @lf.flush
-      @lf.puts("ArMailerRevised--> enter Mailman:deliver_emails: methods:#{ArMailerRevised.email_class.methods}"); @lf.flush
+#      @lf.puts("ArMailerRevised--> enter Mailman:deliver_emails: name:#{ArMailerRevised.email_class.name}"); @lf.flush
+#      @lf.puts("ArMailerRevised--> enter Mailman:deliver_emails: methods:#{ArMailerRevised.email_class.methods}"); @lf.flush
       begin
         total_mail_count = ArMailerRevised.email_class.ready_to_deliver.count
       rescue Exception => e
         logger.info( "ArMailerRevised--> enter Mailman:deliver_emails:Exception" )
-        @lf.puts "ArMailerRevised--> enter Mailman:deliver_emails:Exception" ; @lf.flush
-        @lf.puts "ArMailerRevised--> enter Mailman:deliver_emails: e: #{e}" ; @lf.flush
+#        @lf.puts "ArMailerRevised--> enter Mailman:deliver_emails:Exception" ; @lf.flush
+#        @lf.puts "ArMailerRevised--> enter Mailman:deliver_emails: e: #{e}" ; @lf.flush
       end
-      @lf.puts "ArMailerRevised--> enter Mailman:deliver_emails: total_mail_count: #{total_mail_count}" ; @lf.flush
+#      @lf.puts "ArMailerRevised--> enter Mailman:deliver_emails: total_mail_count: #{total_mail_count}" ; @lf.flush
       emails           = ArMailerRevised.email_class.ready_to_deliver.with_batch_size(@options[:batch_size])
-      @lf.puts "ArMailerRevised--> enter Mailman:deliver_emails: 0" ; @lf.flush
+#      @lf.puts "ArMailerRevised--> enter Mailman:deliver_emails: 0" ; @lf.flush
 
       if emails.empty?
-        @lf.puts "ArMailerRevised--> enter Mailman:deliver_emails: emails.empty" ; @lf.flush
+#        @lf.puts "ArMailerRevised--> enter Mailman:deliver_emails: emails.empty" ; @lf.flush
         logger.info 'No emails to be sent, existing'
         return
       end
 
-      @lf.puts "ArMailerRevised--> enter Mailman:deliver_emails: 1" ; @lf.flush
+#      @lf.puts "ArMailerRevised--> enter Mailman:deliver_emails: 1" ; @lf.flush
 
       logger.info "Starting batch sending process, sending #{emails.count} / #{total_mail_count} mails"
-      @lf.puts "ArMailerRevised--> enter Mailman:deliver_emails: Starting batch sending process, sending #{emails.count} / #{total_mail_count} mails" ; @lf.flush
+#      @lf.puts "ArMailerRevised--> enter Mailman:deliver_emails: Starting batch sending process, sending #{emails.count} / #{total_mail_count} mails" ; @lf.flush
 
       group_emails_by_settings(emails).each do |settings_hash, grouped_emails|
         setting = OpenStruct.new(settings_hash)
@@ -128,7 +128,7 @@ module ArMailerRevised
     #   grouped together under the default SMTP settings.
     #
     def group_emails_by_settings(emails)
-      @lf.puts "ArMailerRevised--> enter Mailman:group_emails_by_settings:" ; @lf.flush
+#      @lf.puts "ArMailerRevised--> enter Mailman:group_emails_by_settings:" ; @lf.flush
       emails.inject({}) do |hash, email|
         setting = ActionMailer::Base.smtp_settings
 
@@ -216,18 +216,18 @@ module ArMailerRevised
     # Errors are logged with the :warn level.
     #
     def send_email(smtp, email)
-      @lf.puts "ArMailerRevised--> enter Mailman:send_email" ; @lf.flush
+#      @lf.puts "ArMailerRevised--> enter Mailman:send_email" ; @lf.flush
       email.fail_reasons = {} if email.fail_reasons.nil?
       if email.failed_tries.to_i > 6
-        @lf.puts "ArMailerRevised--> Mailman:send_email retry count exeeded Email ##{email.id}" ; @lf.flush
+#        @lf.puts "ArMailerRevised--> Mailman:send_email retry count exeeded Email ##{email.id}" ; @lf.flush
         logger.info "retry count exeeded Email ##{email.id}"
         email_hash = email.attributes
         email_hash.delete("id")
-        @lf.puts "ArMailerRevised--> Mailman:send_email 1" ; @lf.flush
+#        @lf.puts "ArMailerRevised--> Mailman:send_email 1" ; @lf.flush
         ArMailerRevised.email_failed_class.create(email_hash)
-        @lf.puts "ArMailerRevised--> Mailman:send_email 2" ; @lf.flush
+#        @lf.puts "ArMailerRevised--> Mailman:send_email 2" ; @lf.flush
         email.destroy
-        @lf.puts "ArMailerRevised--> Mailman:send_email 3" ; @lf.flush
+#        @lf.puts "ArMailerRevised--> Mailman:send_email 3" ; @lf.flush
         return
       end
       logger.info "Sending Email 1 ##{email.id}"
@@ -329,10 +329,10 @@ module ArMailerRevised
     # the custom settings - which might take a while.
     #
     def handle_other_exception(setting, exception, emails)
-      @lf = File.open('/tmp/ar_mailer.log', 'a')
-      @lf.puts "Mailman--> Other error while connecting to '#{setting.host}:#{setting.port}'"
-      @lf.puts "Mailman--> Complete Error (#{exception.class.to_s}): " + exception.to_s
-      @lf.close
+#      @lf = File.open('/tmp/ar_mailer.log', 'a')
+#      @lf.puts "Mailman--> Other error while connecting to '#{setting.host}:#{setting.port}'"
+#      @lf.puts "Mailman--> Complete Error (#{exception.class.to_s}): " + exception.to_s
+#      @lf.close
       logger.warn "Other error while connecting to '#{setting.host}:#{setting.port}'"
       logger.warn "Complete Error (#{exception.class.to_s}): " + exception.to_s
       handle_custom_setting_removal(setting, emails)
